@@ -28,21 +28,14 @@ export default function LandingPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#fafafa] text-[#171717]">
-      {/* Product Header */}
+      {/* Product Header with Real Brand Logo */}
       <header className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-lg bg-[#171717] text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              <path d="M11 8v6"></path>
-              <path d="M8 11h6"></path>
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-base font-bold tracking-tight text-[#171717] leading-tight">Hunt</span>
-            <span className="text-[10px] font-mono text-[#737373]">by Zehunt</span>
-          </div>
+          <img
+            src="/horizantal-logo.jpg"
+            alt="Hunt by Zehunt"
+            className="h-9 w-auto max-w-[170px] object-contain rounded-md"
+          />
         </Link>
 
         <div className="flex items-center gap-3">
@@ -203,6 +196,7 @@ export default function LandingPage() {
       <footer className="border-t border-[#e5e5e5] bg-white mt-16">
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#737373]">
           <div className="flex items-center gap-3">
+            <img src="/hunt-icon.jpg" alt="Hunt" className="w-5 h-5 rounded object-cover" />
             <span className="font-bold text-[#171717]">Hunt</span>
             <span>&bull;</span>
             <span>An AI-native developer knowledge network by <strong>Zehunt</strong></span>

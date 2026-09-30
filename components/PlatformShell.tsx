@@ -8,8 +8,6 @@ import { useRole } from '@/components/RoleProvider';
 interface NavItem {
   href: string;
   label: string;
-  badge?: string | null;
-  badgeColor?: string;
   icon: React.ReactNode;
 }
 
@@ -23,7 +21,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
   const { role, user, logout } = useRole();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // If on landing page or auth pages, do not render top navigation or platform sidebar
+  // If on landing page or auth pages, do not render platform shell sidebar
   const isLandingPage = pathname === '/';
   const isAuthPage = pathname.startsWith('/auth');
 
@@ -35,7 +33,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
     );
   }
 
-  // Navigation items for the Real Platform Workflow
+  // Clean Navigation items (Module tags like M11, M12 removed)
   const navSections: NavSection[] = [
     {
       title: 'Knowledge Core',
@@ -43,7 +41,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         {
           href: '/solutions',
           label: 'Verified Solutions',
-          badge: null,
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -54,7 +51,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         {
           href: '/topics',
           label: 'Topics & Taxonomy',
-          badge: 'M11',
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
@@ -66,7 +62,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         {
           href: '/stacks',
           label: 'Tech Stacks',
-          badge: null,
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -83,7 +78,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         {
           href: '/bookmarks',
           label: 'My Bookmarks',
-          badge: 'M12',
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
@@ -93,7 +87,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         {
           href: '/profile',
           label: 'Developer Profile',
-          badge: 'M03',
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -104,7 +97,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         {
           href: '/notifications',
           label: 'Alerts & Activity',
-          badge: null,
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -120,8 +112,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         {
           href: '/agents',
           label: 'MCP Agent Gateway',
-          badge: 'Live',
-          badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -147,7 +137,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
               {
                 href: '/analytics',
                 label: 'Analytics & Intel',
-                badge: 'M20',
                 icon: (
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -159,7 +148,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
               {
                 href: '/admin',
                 label: 'Admin Console',
-                badge: 'M19',
                 icon: (
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -191,16 +179,13 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
       >
         <div className="flex flex-col h-full overflow-y-auto">
           {/* Platform Brand Header */}
-          <div className="p-5 border-b border-[#e5e5e5] flex items-center justify-between">
+          <div className="p-4 border-b border-[#e5e5e5] flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 group">
-              <div className="w-8 h-8 rounded-lg bg-[#171717] text-white flex items-center justify-center font-bold shadow-xs group-hover:scale-105 transition-transform">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  <path d="M11 8v6"></path>
-                  <path d="M8 11h6"></path>
-                </svg>
-              </div>
+              <img
+                src="/hunt-icon.jpg"
+                alt="Hunt"
+                className="w-8 h-8 rounded-lg object-contain bg-black shadow-xs group-hover:scale-105 transition-transform"
+              />
               <div className="flex flex-col">
                 <span className="text-base font-bold tracking-tight text-[#171717]">Hunt Platform</span>
                 <span className="text-[10px] font-mono text-[#15803d] font-semibold flex items-center gap-1.5">
@@ -260,17 +245,6 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                         <span className={isActive ? 'text-white' : 'text-[#737373]'}>{item.icon}</span>
                         <span>{item.label}</span>
                       </div>
-                      {item.badge && (
-                        <span
-                          className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
-                            isActive
-                              ? 'bg-[#262626] text-[#e5e5e5] border-[#404040]'
-                              : item.badgeColor || 'bg-[#f5f5f5] text-[#737373] border-[#e5e5e5]'
-                          }`}
-                        >
-                          {item.badge}
-                        </span>
-                      )}
                     </Link>
                   );
                 })}
@@ -278,7 +252,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
             ))}
           </nav>
 
-          {/* User Account / Role Section at bottom */}
+          {/* Clean User Account Section at bottom (No role switcher buttons) */}
           <div className="p-4 border-t border-[#e5e5e5] bg-[#fafafa]/80 space-y-3">
             {user ? (
               <div className="flex items-center justify-between">
@@ -292,17 +266,17 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-[#171717] leading-tight">
-                      @{user.username}
+                      {user.display_name}
                     </span>
-                    <span className="text-[11px] font-mono text-[#737373] capitalize">
-                      {role} role
+                    <span className="text-[11px] font-mono text-[#737373]">
+                      @{user.username}
                     </span>
                   </div>
                 </Link>
                 <button
                   onClick={() => void logout()}
                   title="Sign out"
-                  className="p-1.5 text-[#a3a3a3] hover:text-[#b91c1c] transition-colors rounded-lg hover:bg-white"
+                  className="p-1.5 text-[#a3a3a3] hover:text-[#b91c1c] transition-colors rounded-lg hover:bg-white cursor-pointer"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -312,18 +286,12 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                 </button>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Link
                   href="/auth/signin"
                   className="w-full block text-center py-2 text-xs font-semibold text-[#171717] bg-white border border-[#e5e5e5] rounded-lg hover:bg-[#f5f5f5]"
                 >
-                  Sign In
-                </Link>
-                <Link
-                  href="/auth/signup"
-                  className="w-full block text-center py-2 text-xs font-semibold text-white bg-[#171717] rounded-lg hover:bg-[#262626]"
-                >
-                  Join Developers
+                  Sign In to Account
                 </Link>
               </div>
             )}
@@ -340,7 +308,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
 
       {/* Main Platform Content Area */}
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
-        {/* Subtle Top Utility Bar (No top navigation tabs) */}
+        {/* Subtle Top Utility Bar */}
         <header className="sticky top-0 z-30 h-14 bg-white/80 backdrop-blur-md border-b border-[#e5e5e5] px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -373,7 +341,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <span>Quick search solutions...</span>
+              <span>Quick search...</span>
               <span className="font-mono text-[10px] bg-white border border-[#e5e5e5] px-1.5 py-0.5 rounded text-[#525252]">⌘K</span>
             </Link>
 

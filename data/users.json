@@ -9,8 +9,21 @@
       "password": "dev123",
       "status": "active",
       "bio": "Staff Software Engineer. Building distributed AI systems, Next.js architecture, and database infrastructure.",
-      "skills": ["TypeScript", "Next.js", "PostgreSQL", "Neon", "Distributed Systems", "MCP"],
-      "technologies": ["React 19", "Prisma", "Docker", "Node 22", "Tailwind CSS"],
+      "skills": [
+        "TypeScript",
+        "Next.js",
+        "PostgreSQL",
+        "Neon",
+        "Distributed Systems",
+        "MCP"
+      ],
+      "technologies": [
+        "React 19",
+        "Prisma",
+        "Docker",
+        "Node 22",
+        "Tailwind CSS"
+      ],
       "website": "https://zehunt.com",
       "github": "https://github.com/zehunt",
       "stats": {
@@ -21,13 +34,33 @@
         "connected_agents_count": 4
       },
       "bookmarks": [
-        { "id": 4821, "title": "Supabase authentication fails after Vercel deployment", "category": "Authentication" },
-        { "id": 4819, "title": "Neon Postgres connection pool exhaustion during Next.js dev", "category": "Databases" }
+        {
+          "id": 4821,
+          "title": "Supabase authentication fails after Vercel deployment",
+          "category": "Authentication"
+        },
+        {
+          "id": 4819,
+          "title": "Neon Postgres connection pool exhaustion during Next.js dev",
+          "category": "Databases"
+        }
       ],
       "onboarding": {
-        "build": ["Web", "Backend", "Cloud"],
-        "problems": ["Authentication", "Deployment", "Postgres / Neon"],
-        "tools": ["VS Code", "Cursor", "Claude"]
+        "build": [
+          "Web",
+          "Backend",
+          "Cloud"
+        ],
+        "problems": [
+          "Authentication",
+          "Deployment",
+          "Postgres / Neon"
+        ],
+        "tools": [
+          "VS Code",
+          "Cursor",
+          "Claude"
+        ]
       }
     },
     {
@@ -39,8 +72,16 @@
       "password": "admin123",
       "status": "active",
       "bio": "Platform manager and trust governance lead.",
-      "skills": ["Moderation", "Security", "Operations"],
-      "technologies": ["MCP", "Neon", "Next.js"],
+      "skills": [
+        "Moderation",
+        "Security",
+        "Operations"
+      ],
+      "technologies": [
+        "MCP",
+        "Neon",
+        "Next.js"
+      ],
       "website": "https://hunt.zehunt.com",
       "github": "https://github.com/zehunt",
       "stats": {
@@ -52,9 +93,15 @@
       },
       "bookmarks": [],
       "onboarding": {
-        "build": ["Platform"],
-        "problems": ["Governance"],
-        "tools": ["Admin Console"]
+        "build": [
+          "Platform"
+        ],
+        "problems": [
+          "Governance"
+        ],
+        "tools": [
+          "Admin Console"
+        ]
       }
     }
   ],
