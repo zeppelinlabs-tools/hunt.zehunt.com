@@ -65,19 +65,19 @@ export default function AgentGatewayPage() {
 
   return (
     <RoleGate allow={['developer', 'admin']} title="Agent gateway">
-      <div className="space-y-6">
+      <div className="space-y-6 min-w-0">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-[#171717]">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#171717]">
               AI Agent Platform &amp; Live Audit
             </h1>
-            <p className="text-base text-[#525252] mt-1">
+            <p className="text-sm sm:text-base text-[#525252] mt-1 max-w-2xl">
               Model Context Protocol (MCP) gateway connecting autonomous coding tools (Claude, Cursor, Kiro) to Hunt&apos;s verified problem knowledge.
             </p>
           </div>
           <button
             onClick={handleSimulateCall}
-            className="px-5 py-2.5 bg-[#2563eb] text-white hover:bg-[#1d4ed8] text-sm font-semibold rounded-xl transition-colors shadow-xs cursor-pointer flex items-center gap-2 shrink-0"
+            className="px-4 sm:px-5 py-2.5 bg-[#2563eb] text-white hover:bg-[#1d4ed8] text-sm font-semibold rounded-xl transition-colors shadow-xs cursor-pointer flex items-center gap-2 shrink-0"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -86,42 +86,42 @@ export default function AgentGatewayPage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 min-w-0">
           {/* Terminal log view */}
-          <div className="bg-[#121214] border border-[#27272a] rounded-2xl overflow-hidden shadow-xl flex flex-col">
-            <div className="bg-[#18181b] px-5 py-3 border-b border-[#27272a] flex justify-between items-center text-sm font-mono text-[#a1a1aa]">
-              <div className="flex gap-2">
+          <div className="bg-[#121214] border border-[#27272a] rounded-2xl overflow-hidden shadow-xl flex flex-col min-w-0">
+            <div className="bg-[#18181b] px-4 sm:px-5 py-3 border-b border-[#27272a] flex justify-between items-center text-sm font-mono text-[#a1a1aa] gap-2">
+              <div className="flex gap-2 shrink-0">
                 <div className="w-3 h-3 rounded-full bg-[#ef4444]"></div>
                 <div className="w-3 h-3 rounded-full bg-[#eab308]"></div>
                 <div className="w-3 h-3 rounded-full bg-[#22c55e]"></div>
               </div>
-              <div className="text-xs">hunt-mcp-gateway // live agent session</div>
-              <div className="text-[#34d399] font-bold text-xs flex items-center gap-1.5">
+              <div className="text-[11px] sm:text-xs truncate">hunt-mcp-gateway // live agent session</div>
+              <div className="text-[#34d399] font-bold text-xs flex items-center gap-1.5 shrink-0">
                 <span className="w-2 h-2 rounded-full bg-[#34d399] animate-pulse"></span>
                 CONNECTED
               </div>
             </div>
 
-            <div className="p-6 font-mono text-sm text-[#e4e4e7] space-y-4 max-h-[600px] overflow-y-auto">
+            <div className="p-4 sm:p-6 font-mono text-sm text-[#e4e4e7] space-y-4 max-h-[600px] overflow-y-auto min-w-0">
               {logs.map((log, idx) => (
-                <div key={idx} className="leading-relaxed border-b border-[#27272a]/50 pb-3">
-                  <div className="flex items-center gap-2 mb-1">
+                <div key={idx} className="leading-relaxed border-b border-[#27272a]/50 pb-3 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <span className="text-[#71717a] text-xs">[{log.timestamp || log.time}]</span>
                     <span className="bg-[#27272a] px-2 py-0.5 rounded text-[#fbbf24] text-xs font-semibold">
                       {log.agent}
                     </span>
                   </div>
                   {log.type === 'tool_call' ? (
-                    <div className="space-y-1">
-                      <div className="text-[#60a5fa] font-bold">
+                    <div className="space-y-1 min-w-0">
+                      <div className="text-[#60a5fa] font-bold break-all">
                         &rarr; {log.tool} <span className="text-[#f472b6] font-normal text-xs">{JSON.stringify(log.args)}</span>
                       </div>
-                      <div className="text-[#34d399] bg-[#18181b] p-3 rounded-lg text-xs leading-relaxed mt-1">
+                      <div className="text-[#34d399] bg-[#18181b] p-3 rounded-lg text-xs leading-relaxed mt-1 overflow-x-auto break-all whitespace-pre-wrap border border-[#27272a]/50">
                         {log.response}
                       </div>
                     </div>
                   ) : (
-                    <span className="text-[#a1a1aa]">{log.message}</span>
+                    <span className="text-[#a1a1aa] break-words">{log.message}</span>
                   )}
                 </div>
               ))}
@@ -129,61 +129,75 @@ export default function AgentGatewayPage() {
           </div>
 
           {/* Sidebar Controls */}
-          <div className="space-y-5">
-            <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3 shadow-xs">
+          <div className="space-y-5 min-w-0">
+            {/* HTTP MCP Endpoint Responsive Card */}
+            <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3 shadow-xs min-w-0 overflow-hidden">
               <h3 className="font-bold uppercase tracking-wider text-[#737373] text-xs">
                 HTTP MCP Endpoint
               </h3>
               <p className="text-xs text-[#525252]">Access endpoint with header authorization:</p>
-              <pre className="bg-[#18181b] text-[#38bdf8] p-3.5 rounded-xl font-mono text-xs select-all leading-relaxed">
-Endpoint: http://hunt.zehunt.com/mcp
-Header:   X-Hunt-API-Key: hunt_sk_live...
-              </pre>
+              
+              <div className="bg-[#18181b] text-[#38bdf8] p-3.5 rounded-xl font-mono text-xs select-all leading-relaxed overflow-x-auto break-all whitespace-pre-wrap space-y-2 border border-[#27272a]">
+                <div>
+                  <span className="text-[#a1a1aa] select-none text-[10px] uppercase font-bold tracking-wider block mb-0.5">
+                    Endpoint URL:
+                  </span>
+                  <span className="text-[#38bdf8] break-all">http://hunt.zehunt.com/mcp</span>
+                </div>
+                <div className="pt-2 border-t border-[#27272a]">
+                  <span className="text-[#a1a1aa] select-none text-[10px] uppercase font-bold tracking-wider block mb-0.5">
+                    Auth Header:
+                  </span>
+                  <span className="text-[#f472b6] break-all">X-Hunt-API-Key: hunt_sk_live...</span>
+                </div>
+              </div>
             </div>
 
-            <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3.5 shadow-xs">
+            {/* Agent Access Permissions */}
+            <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3.5 shadow-xs min-w-0">
               <h3 className="font-bold uppercase tracking-wider text-[#737373] text-xs">
                 Agent Access Permissions
               </h3>
               <p className="text-xs text-[#525252]">Granular permissions granted to your connected developer agents:</p>
               <div className="space-y-2.5 text-sm">
-                <label className="flex items-center gap-2.5 text-[#171717]">
-                  <input type="checkbox" defaultChecked disabled className="rounded text-[#2563eb]" />
-                  <span><strong>knowledge:read</strong> (Search &amp; retrieve)</span>
+                <label className="flex items-center gap-2.5 text-[#171717] min-w-0">
+                  <input type="checkbox" defaultChecked disabled className="rounded text-[#2563eb] shrink-0" />
+                  <span className="break-words"><strong>knowledge:read</strong> (Search &amp; retrieve)</span>
                 </label>
-                <label className="flex items-center gap-2.5 text-[#171717]">
-                  <input type="checkbox" defaultChecked disabled className="rounded text-[#2563eb]" />
-                  <span><strong>attempts:read</strong> (Read dead-ends)</span>
+                <label className="flex items-center gap-2.5 text-[#171717] min-w-0">
+                  <input type="checkbox" defaultChecked disabled className="rounded text-[#2563eb] shrink-0" />
+                  <span className="break-words"><strong>attempts:read</strong> (Read dead-ends)</span>
                 </label>
-                <label className="flex items-center gap-2.5 text-[#171717]">
-                  <input type="checkbox" defaultChecked className="rounded text-[#2563eb]" />
-                  <span><strong>knowledge:write</strong> (Draft solutions)</span>
+                <label className="flex items-center gap-2.5 text-[#171717] min-w-0">
+                  <input type="checkbox" defaultChecked className="rounded text-[#2563eb] shrink-0" />
+                  <span className="break-words"><strong>knowledge:write</strong> (Draft solutions)</span>
                 </label>
               </div>
             </div>
 
-            <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3 shadow-xs">
+            {/* Connected Agents */}
+            <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3 shadow-xs min-w-0">
               <h3 className="font-bold uppercase tracking-wider text-[#737373] text-xs">
                 Connected Agents
               </h3>
               <div className="border-b border-[#f5f5f5] pb-2.5">
-                <div className="font-bold text-[#171717]">Cursor Coding Agent</div>
+                <div className="font-bold text-[#171717] truncate">Cursor Coding Agent</div>
                 <div className="text-xs text-[#737373] mt-0.5">Active via stdio &bull; Last query: 2m ago</div>
               </div>
               <div className="border-b border-[#f5f5f5] pb-2.5">
-                <div className="font-bold text-[#171717]">Claude Desktop MCP</div>
+                <div className="font-bold text-[#171717] truncate">Claude Desktop MCP</div>
                 <div className="text-xs text-[#737373] mt-0.5">Local transport &bull; Ready</div>
               </div>
               <div>
-                <div className="font-bold text-[#171717]">Kiro Autonomous Worker</div>
+                <div className="font-bold text-[#171717] truncate">Kiro Autonomous Worker</div>
                 <div className="text-xs text-[#737373] mt-0.5">Idle</div>
               </div>
             </div>
 
-            <div className="bg-white border border-[#e5e5e5] p-4 rounded-xl text-sm">
-              <Link href="/settings/sessions" className="text-[#2563eb] font-semibold hover:underline flex items-center justify-between">
-                <span>Manage Security Tokens &amp; Sessions</span>
-                <span>&rarr;</span>
+            <div className="bg-white border border-[#e5e5e5] p-4 rounded-xl text-sm min-w-0">
+              <Link href="/settings/sessions" className="text-[#2563eb] font-semibold hover:underline flex items-center justify-between gap-2">
+                <span className="truncate">Manage Security Tokens &amp; Sessions</span>
+                <span className="shrink-0">&rarr;</span>
               </Link>
             </div>
           </div>

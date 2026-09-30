@@ -499,7 +499,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         </header>
 
         {/* Dashboard Content Container */}
-        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto min-w-0">
           {children}
         </main>
       </div>
