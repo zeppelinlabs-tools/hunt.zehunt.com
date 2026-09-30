@@ -131,6 +131,16 @@ The database has been seeded with:
 - `db/schema.sql` - Complete database schema
 - `.env.local` - Environment variables (DATABASE_URL)
 
+## Authentication
+
+The signin page (`/auth/signin`) requires actual user credentials. Role-based bypass buttons have been removed for security.
+
+**To sign in:**
+1. Navigate to `/auth/signin`
+2. Enter email and password
+3. System authenticates against database
+4. User is redirected based on role (admin → `/admin`, developer → `/solutions`)
+
 ## Next Steps
 
 1. **Test Authentication:**
@@ -138,7 +148,7 @@ The database has been seeded with:
    # Login with admin account
    curl -X POST http://localhost:3000/api/v1/auth/signin \
      -H "Content-Type: application/json" \
-     -d '{"username":"madnan_admin","password":"@aicp!2024"}'
+     -d '{"email":"dev.madnansultan@gmail.com","password":"@aicp!2024"}'
    ```
 
 2. **Test MCP Endpoint:**
