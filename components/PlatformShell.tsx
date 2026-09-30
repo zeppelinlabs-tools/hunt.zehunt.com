@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/components/RoleProvider';
@@ -20,6 +20,16 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
   const pathname = usePathname();
   const { role, user, logout } = useRole();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [adminViewMode, setAdminViewMode] = useState<'admin' | 'developer'>('admin');
+
+  // Automatically switch admin view mode based on route context
+  useEffect(() => {
+    if (role === 'admin') {
+      if (pathname.startsWith('/admin') || pathname.startsWith('/analytics')) {
+        setAdminViewMode('admin');
+      }
+    }
+  }, [pathname, role]);
 
   // If on landing page or auth pages, do not render platform shell sidebar
   const isLandingPage = pathname === '/';
@@ -33,8 +43,115 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
     );
   }
 
-  // Clean Navigation items (Module tags like M11, M12 removed)
-  const navSections: NavSection[] = [
+  // Admin Dedicated Workspace Navigation
+  const adminNavSections: NavSection[] = [
+    {
+      title: 'Governance & Operations',
+      items: [
+        {
+          href: '/admin',
+          label: 'Platform Overview & Moderation',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          ),
+        },
+        {
+          href: '/analytics',
+          label: 'Platform Analytics & KPIs',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Security & Ecosystem',
+      items: [
+        {
+          href: '/agents',
+          label: 'MCP Agent Audit & Tokens',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line>
+              <line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line>
+              <line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line>
+              <line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line>
+              <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+          ),
+        },
+        {
+          href: '/settings/sessions',
+          label: 'Security & Active Sessions',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          ),
+        },
+      ],
+    },
+    {
+      title: 'Developer Core (Dual Access)',
+      items: [
+        {
+          href: '/solutions',
+          label: 'Explore Solutions Feed',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          ),
+        },
+        {
+          href: '/topics',
+          label: 'Topics & Taxonomy',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+              <polyline points="2 17 12 22 22 17"></polyline>
+              <polyline points="2 12 12 17 22 12"></polyline>
+            </svg>
+          ),
+        },
+        {
+          href: '/bookmarks',
+          label: 'My Saved Bookmarks',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+          ),
+        },
+        {
+          href: '/profile',
+          label: 'Admin Profile & Stats',
+          icon: (
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          ),
+        },
+      ],
+    },
+  ];
+
+  // Standard Developer Workspace Navigation
+  const developerNavSections: NavSection[] = [
     {
       title: 'Knowledge Core',
       items: [
@@ -129,37 +246,11 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         },
       ],
     },
-    ...(role === 'admin'
-      ? [
-          {
-            title: 'Governance & Ops',
-            items: [
-              {
-                href: '/analytics',
-                label: 'Analytics & Intel',
-                icon: (
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"></line>
-                    <line x1="12" y1="20" x2="12" y2="4"></line>
-                    <line x1="6" y1="20" x2="6" y2="14"></line>
-                  </svg>
-                ),
-              },
-              {
-                href: '/admin',
-                label: 'Admin Console',
-                icon: (
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                ),
-              },
-            ],
-          },
-        ]
-      : []),
   ];
+
+  // Active navigation sections depending on role and admin view mode
+  const activeNavSections =
+    role === 'admin' && adminViewMode === 'admin' ? adminNavSections : developerNavSections;
 
   return (
     <div className="min-h-screen flex bg-[#fafafa] text-[#171717]">
@@ -187,7 +278,16 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                 className="w-8 h-8 rounded-lg object-contain bg-black shadow-xs group-hover:scale-105 transition-transform"
               />
               <div className="flex flex-col">
-                <span className="text-base font-bold tracking-tight text-[#171717]">Hunt Platform</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-base font-bold tracking-tight text-[#171717]">
+                    {role === 'admin' && adminViewMode === 'admin' ? 'Admin Console' : 'Hunt Platform'}
+                  </span>
+                  {role === 'admin' && (
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#171717] text-white font-bold">
+                      PRO
+                    </span>
+                  )}
+                </div>
                 <span className="text-[10px] font-mono text-[#15803d] font-semibold flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#15803d] animate-pulse"></span>
                   MCP Active
@@ -206,6 +306,48 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
             </button>
           </div>
 
+          {/* Admin Dual Mode Switcher: "Use as Developer" option */}
+          {role === 'admin' && (
+            <div className="p-3 bg-[#f8fafc] border-b border-[#e5e5e5]">
+              <div className="flex items-center justify-between text-[11px] font-mono mb-1.5 px-1">
+                <span className="text-[#64748b] font-medium">Workspace View</span>
+                <span className="text-[#0f172a] font-bold capitalize">{adminViewMode} Mode</span>
+              </div>
+              <div className="grid grid-cols-2 gap-1 bg-[#e2e8f0]/80 p-1 rounded-xl text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setAdminViewMode('admin')}
+                  className={`py-1.5 px-2 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    adminViewMode === 'admin'
+                      ? 'bg-white text-[#0f172a] shadow-xs font-bold'
+                      : 'text-[#64748b] hover:text-[#0f172a]'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  <span>Admin</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAdminViewMode('developer')}
+                  className={`py-1.5 px-2 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    adminViewMode === 'developer'
+                      ? 'bg-white text-[#2563eb] shadow-xs font-bold'
+                      : 'text-[#64748b] hover:text-[#0f172a]'
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                  <span>Developer</span>
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Primary Action Button */}
           <div className="p-4 pb-2">
             <Link
@@ -223,7 +365,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
 
           {/* Navigation Sections */}
           <nav className="flex-1 p-4 space-y-6">
-            {navSections.map((section) => (
+            {activeNavSections.map((section) => (
               <div key={section.title} className="space-y-1">
                 <div className="text-[11px] font-mono font-semibold uppercase tracking-wider text-[#a3a3a3] px-3 mb-2">
                   {section.title}
@@ -252,7 +394,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
             ))}
           </nav>
 
-          {/* Clean User Account Section at bottom (No role switcher buttons) */}
+          {/* User Account Section at bottom */}
           <div className="p-4 border-t border-[#e5e5e5] bg-[#fafafa]/80 space-y-3">
             {user ? (
               <div className="flex items-center justify-between">
@@ -261,7 +403,9 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-[#2563eb] text-white flex items-center justify-center font-bold text-xs">
+                  <div className={`w-8 h-8 rounded-lg text-white flex items-center justify-center font-bold text-xs ${
+                    role === 'admin' ? 'bg-[#0f172a]' : 'bg-[#2563eb]'
+                  }`}>
                     {user.display_name?.substring(0, 2).toUpperCase() || 'DV'}
                   </div>
                   <div className="flex flex-col">
@@ -269,7 +413,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                       {user.display_name}
                     </span>
                     <span className="text-[11px] font-mono text-[#737373]">
-                      @{user.username}
+                      @{user.username} {role === 'admin' && '(Admin & Dev)'}
                     </span>
                   </div>
                 </Link>
@@ -324,15 +468,29 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
 
             {/* Quick Context Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-[#737373]">
-              <span className="font-semibold text-[#171717]">Hunt</span>
+              <span className="font-semibold text-[#171717]">
+                {role === 'admin' && adminViewMode === 'admin' ? 'Hunt Admin' : 'Hunt Platform'}
+              </span>
               <span>/</span>
               <span className="capitalize font-medium text-[#171717]">
-                {pathname.split('/')[1] || 'Platform'}
+                {pathname.split('/')[1] || 'Dashboard'}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Quick indicator when admin is using Developer View */}
+            {role === 'admin' && adminViewMode === 'developer' && (
+              <button
+                type="button"
+                onClick={() => setAdminViewMode('admin')}
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#bfdbfe] bg-[#eff6ff] text-xs font-mono text-[#2563eb] hover:bg-[#dbeafe] transition-colors cursor-pointer"
+              >
+                <span>Operating as Developer &bull; Return to Admin</span>
+                <span>&rarr;</span>
+              </button>
+            )}
+
             <Link
               href="/solutions"
               className="hidden sm:flex items-center gap-2 bg-[#f5f5f5] hover:bg-[#ebebeb] border border-[#e5e5e5] rounded-lg px-3 py-1.5 text-xs text-[#737373] transition-colors"

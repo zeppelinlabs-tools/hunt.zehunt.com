@@ -68,7 +68,7 @@ export default function AdminPage() {
         {/* Moderation Queue */}
         <div className="bg-white border border-[#e5e5e5] rounded-2xl overflow-hidden shadow-xs">
           <div className="px-6 py-4 bg-[#f8fafc] border-b border-[#e5e5e5] flex justify-between items-center text-sm">
-            <span className="font-bold text-[#171717]">Moderation &amp; Content Review Queue (M17)</span>
+            <span className="font-bold text-[#171717]">Moderation &amp; Content Review Queue</span>
             <span className="badge-tag mono text-xs">Queue: {flaggedItems.length} items pending</span>
           </div>
 
@@ -102,7 +102,7 @@ export default function AdminPage() {
                       onClick={() => setFlaggedItems(flaggedItems.filter(f => f.id !== item.id))}
                       className="text-[#b91c1c] hover:underline font-semibold text-sm cursor-pointer"
                     >
-                      Sanitize &amp; Hide
+                      Remove
                     </button>
                   </td>
                 </tr>
