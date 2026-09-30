@@ -51,7 +51,7 @@ async function resetDatabase() {
 
     for (const table of tables) {
       try {
-        await sql(`DROP TABLE IF EXISTS ${table} CASCADE` as any);
+        await sql.query(`DROP TABLE IF EXISTS ${table} CASCADE`);
         console.log(`✅ Dropped table: ${table}`);
       } catch (error: any) {
         console.log(`⚠️  Could not drop ${table}: ${error.message}`);
@@ -60,7 +60,7 @@ async function resetDatabase() {
 
     // Drop custom types and functions
     try {
-      await sql('DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE' as any);
+      await sql.query('DROP FUNCTION IF EXISTS update_updated_at_column() CASCADE');
       console.log('✅ Dropped function: update_updated_at_column');
     } catch (error) {
       // Ignore errors

@@ -34,7 +34,7 @@ async function setupDatabase() {
       if (statement.startsWith('--') || statement.length === 0) continue;
 
       try {
-        await sql(statement as any);
+        await sql.query(statement);
         
         // Log progress for major operations
         if (statement.includes('CREATE TABLE')) {
