@@ -1,17 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import RoleGate from '@/components/RoleGate';
 
+interface AdminMetrics {
+  totalUsers: number;
+  activeUsers: number;
+  totalProblems: number;
+  verifiedSolutions: number;
+  mcpQueriesToday: number;
+  secretBlocks: number;
+}
+
 export default function AdminPage() {
-  const metrics = {
-    totalUsers: 1420,
-    totalProblems: 4281,
-    verifiedSolutions: 3890,
-    mcpQueriesToday: 914,
-    secretBlocks: 27
-  };
+  const [metrics, setMetrics] = useState<AdminMetrics>({
+    totalUsers: 0,
+    activeUsers: 0,
+    totalProblems: 0,
+    verifiedSolutions: 0,
+    mcpQueriesToday: 0,
+    secretBlocks: 0
+  });
+  const [loading, setLoading] = useState(true);
 
   const [flaggedItems, setFlaggedItems] = useState([
     {
@@ -29,6 +40,31 @@ export default function AdminPage() {
       status: 'Flagged'
     }
   ]);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const res = await fetch('/api/v1/analytics');
+        const data = await res.json();
+        if (data.success) {
+          setMetrics({
+            totalUsers: data.analytics.totalUsers || 0,
+            activeUsers: data.analytics.activeUsers || 0,
+            totalProblems: data.analytics.totalProblems || 0,
+            verifiedSolutions: data.analytics.verifiedSolutions || 0,
+            mcpQueriesToday: data.analytics.mcpQueriesToday || 0,
+            secretBlocks: 0 // This would need a separate API or query
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch metrics:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMetrics();
+  }, []);
 
   return (
     <RoleGate allow={['admin']} title="Admin console">
@@ -53,32 +89,40 @@ export default function AdminPage() {
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <Link
-            href="/admin/users"
-            className="bg-white hover:bg-[#f8fafc] border border-[#e5e5e5] hover:border-[#cbd5e1] p-5 rounded-2xl shadow-xs transition-all block group"
-          >
-            <div className="flex justify-between items-start">
-              <div className="text-3xl font-bold text-[#171717]">{metrics.totalUsers}</div>
-              <span className="text-xs text-[#2563eb] group-hover:translate-x-0.5 transition-transform font-mono">Manage &rarr;</span>
+          {loading ? (
+            <div className="col-span-5 text-center py-8 text-sm text-[#737373]">
+              Loading metrics...
             </div>
-            <div className="text-sm text-[#737373] mt-1 font-medium">Registered Developers</div>
-          </Link>
-          <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
-            <div className="text-3xl font-bold text-[#171717]">{metrics.totalProblems}</div>
-            <div className="text-sm text-[#737373] mt-1 font-medium">Problems Logged</div>
-          </div>
-          <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
-            <div className="text-3xl font-bold text-[#15803d]">{metrics.verifiedSolutions}</div>
-            <div className="text-sm text-[#737373] mt-1 font-medium">Verified Solutions</div>
-          </div>
-          <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
-            <div className="text-3xl font-bold text-[#2563eb]">{metrics.mcpQueriesToday}</div>
-            <div className="text-sm text-[#737373] mt-1 font-medium">MCP Queries (24h)</div>
-          </div>
-          <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
-            <div className="text-3xl font-bold text-[#b91c1c]">{metrics.secretBlocks}</div>
-            <div className="text-sm text-[#737373] mt-1 font-medium">Secret Leaks Prevented</div>
-          </div>
+          ) : (
+            <>
+              <Link
+                href="/admin/users"
+                className="bg-white hover:bg-[#f8fafc] border border-[#e5e5e5] hover:border-[#cbd5e1] p-5 rounded-2xl shadow-xs transition-all block group"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="text-3xl font-bold text-[#171717]">{metrics.totalUsers}</div>
+                  <span className="text-xs text-[#2563eb] group-hover:translate-x-0.5 transition-transform font-mono">Manage &rarr;</span>
+                </div>
+                <div className="text-sm text-[#737373] mt-1 font-medium">Registered Developers</div>
+              </Link>
+              <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
+                <div className="text-3xl font-bold text-[#171717]">{metrics.totalProblems}</div>
+                <div className="text-sm text-[#737373] mt-1 font-medium">Problems Logged</div>
+              </div>
+              <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
+                <div className="text-3xl font-bold text-[#15803d]">{metrics.verifiedSolutions}</div>
+                <div className="text-sm text-[#737373] mt-1 font-medium">Verified Solutions</div>
+              </div>
+              <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
+                <div className="text-3xl font-bold text-[#2563eb]">{metrics.mcpQueriesToday}</div>
+                <div className="text-sm text-[#737373] mt-1 font-medium">MCP Queries (24h)</div>
+              </div>
+              <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
+                <div className="text-3xl font-bold text-[#b91c1c]">{metrics.secretBlocks}</div>
+                <div className="text-sm text-[#737373] mt-1 font-medium">Secret Leaks Prevented</div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Moderation Queue */}
