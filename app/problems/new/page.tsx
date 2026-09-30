@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -124,7 +124,7 @@ export default function NewProblemPage() {
             </div>
             <div>
               <label className="block text-sm font-semibold text-[#171717] mb-1.5">
-                Environment Details (M04 Matrix)
+                Environment Details Matrix
               </label>
               <input
                 name="env"
@@ -175,7 +175,7 @@ export default function NewProblemPage() {
           <div className="bg-[#fffcf9] border border-[#fed7aa] p-5 rounded-2xl space-y-3">
             <div>
               <label className="block text-sm font-bold text-[#9a3412]">
-                ⚠️ Failed Attempts &amp; Dead Ends (What didn&apos;t work - M06)
+                ⚠️ Failed Attempts &amp; Dead Ends (What didn&apos;t work)
               </label>
               <p className="text-xs text-[#9a3412] mt-0.5">
                 Prevents AI coding agents and developers from repeating these exact debugging actions.
@@ -210,7 +210,7 @@ export default function NewProblemPage() {
           {/* Solution */}
           <div className="bg-[#f8fafc] border border-[#e5e5e5] p-5 rounded-2xl space-y-3.5">
             <label className="block text-sm font-bold text-[#171717]">
-              Verified Solution (M05)
+              Verified Solution
             </label>
             <input
               name="solTitle"
@@ -233,7 +233,7 @@ export default function NewProblemPage() {
           {/* Secret Leak Protection (M16) */}
           <div className="bg-[#f0fdf4] border border-[#bbf7d0] text-[#15803d] px-4 py-3 rounded-xl text-sm font-mono flex items-center gap-2">
             <span>✓</span>
-            <span>Secret Protection (M16): Scanned for API keys, AWS credentials, and DB tokens. Safe.</span>
+            <span>Secret Protection: Scanned for API keys, AWS credentials, and DB tokens. Safe.</span>
           </div>
 
           <div className="flex gap-4 pt-2">

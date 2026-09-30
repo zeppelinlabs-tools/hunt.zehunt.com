@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -132,7 +132,7 @@ export default function ProblemDetailPage() {
     const result = await res.json();
     if (result.success) {
       setCurrentUser((prev) => ({ ...(prev ?? {}), bookmarks: result.bookmarks }));
-      showToast(isBookmarked ? 'Removed from bookmarks' : 'Added to personal bookmarks (M12)');
+      showToast(isBookmarked ? 'Removed from bookmarks' : 'Added to personal bookmarks');
     }
   };
 
@@ -234,7 +234,7 @@ export default function ProblemDetailPage() {
           <div className="bg-white border border-[#e5e5e5] rounded-2xl overflow-hidden shadow-xs">
             <div className="px-5 py-3.5 bg-[#f8fafc] border-b border-[#e5e5e5] flex justify-between items-center text-sm font-bold uppercase tracking-wider text-[#334155]">
               <span>Environment Matrix &amp; Observed Symptoms</span>
-              <span className="font-mono text-xs text-[#64748b]">M04 Knowledge Core</span>
+              <span className="font-mono text-xs text-[#64748b]">Investigation Matrix</span>
             </div>
             <div className="p-5 text-sm sm:text-base leading-relaxed space-y-3">
               <p><strong className="text-[#171717]">Project Context:</strong> {problem.context}</p>
@@ -264,12 +264,12 @@ export default function ProblemDetailPage() {
             </div>
           </div>
 
-          {/* Failed Attempts & Dead Ends (Hunt Core Differentiator M06) */}
+          {/* Failed Attempts & Dead Ends */}
           <div className="bg-white border border-[#fed7aa] rounded-2xl overflow-hidden shadow-xs">
             <div className="px-5 py-3.5 bg-[#fff7ed] border-b border-[#fed7aa] flex justify-between items-center text-sm font-bold uppercase tracking-wider text-[#9a3412]">
               <span className="flex items-center gap-2">
                 <span>⚠️</span>
-                <span>Failed Attempts Preserved (Avoid Repeating - M06)</span>
+                <span>Failed Attempts Preserved (Avoid Repeating)</span>
               </span>
               <span className="font-mono text-xs text-[#c2410c]">{problem.attempts?.length || 0} dead ends logged</span>
             </div>
@@ -299,7 +299,7 @@ export default function ProblemDetailPage() {
             </div>
           </div>
 
-          {/* Solutions (M05 Multiple Approaches) */}
+          {/* Solutions */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="font-bold text-lg text-[#171717]">
@@ -350,7 +350,7 @@ export default function ProblemDetailPage() {
             ))}
           </div>
 
-          {/* Classified Discussions & Peer Comments (M08) */}
+          {/* Classified Discussions & Peer Comments */}
           <div className="bg-white border border-[#e5e5e5] rounded-2xl overflow-hidden shadow-xs">
             <div className="px-5 py-3.5 bg-[#f8fafc] border-b border-[#e5e5e5] flex justify-between items-center text-sm font-bold uppercase tracking-wider text-[#334155]">
               <span>Peer Discussions ({problem.discussions?.length || 0} Contributions)</span>
@@ -422,7 +422,7 @@ export default function ProblemDetailPage() {
           {/* Provenance Card */}
           <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3 shadow-xs">
             <h3 className="font-bold uppercase tracking-wider text-[#737373] text-xs">
-              Verification Provenance (M07)
+              Verification Provenance
             </h3>
             <div className="flex justify-between items-center py-1 border-b border-[#f5f5f5]">
               <span className="text-[#737373]">Status:</span>

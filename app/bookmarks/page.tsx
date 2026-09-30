@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -39,7 +39,7 @@ export default function BookmarksPage() {
             Personal Knowledge &amp; Bookmarks
           </h1>
           <p className="text-base text-[#525252] mt-1">
-            Saved problems, verified fixes, and notes. This private knowledge collection is accessible to your connected AI agents (M12).
+            Saved problems, verified fixes, and notes. This private knowledge collection is accessible to your connected AI agents.
           </p>
         </div>
 

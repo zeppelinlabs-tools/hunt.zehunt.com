@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -143,7 +143,7 @@ Header:   X-Hunt-API-Key: hunt_sk_live...
 
             <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3.5 shadow-xs">
               <h3 className="font-bold uppercase tracking-wider text-[#737373] text-xs">
-                Agent Access Permissions (M14)
+                Agent Access Permissions
               </h3>
               <p className="text-xs text-[#525252]">Granular permissions granted to your connected developer agents:</p>
               <div className="space-y-2.5 text-sm">
@@ -164,7 +164,7 @@ Header:   X-Hunt-API-Key: hunt_sk_live...
 
             <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl text-sm space-y-3 shadow-xs">
               <h3 className="font-bold uppercase tracking-wider text-[#737373] text-xs">
-                Connected Agents (M15)
+                Connected Agents
               </h3>
               <div className="border-b border-[#f5f5f5] pb-2.5">
                 <div className="font-bold text-[#171717]">Cursor Coding Agent</div>
