@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useRole } from '@/components/RoleProvider';
 
 interface NavItem {
@@ -17,19 +17,42 @@ interface NavSection {
 }
 
 export default function PlatformShell({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const pathname = usePathname();
   const { role, user, logout } = useRole();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [adminViewMode, setAdminViewMode] = useState<'admin' | 'developer'>('admin');
 
-  // Automatically switch admin view mode based on route context
+  // Route-based workspace mode synchronization
   useEffect(() => {
     if (role === 'admin') {
       if (pathname.startsWith('/admin') || pathname.startsWith('/analytics')) {
         setAdminViewMode('admin');
+      } else if (
+        pathname.startsWith('/solutions') ||
+        pathname.startsWith('/problems') ||
+        pathname.startsWith('/topics') ||
+        pathname.startsWith('/stacks') ||
+        pathname.startsWith('/bookmarks')
+      ) {
+        setAdminViewMode('developer');
       }
     }
   }, [pathname, role]);
+
+  const switchToDeveloperMode = () => {
+    setAdminViewMode('developer');
+    setMobileMenuOpen(false);
+    if (pathname.startsWith('/admin') || pathname.startsWith('/analytics')) {
+      router.push('/solutions');
+    }
+  };
+
+  const switchToAdminMode = () => {
+    setAdminViewMode('admin');
+    setMobileMenuOpen(false);
+    router.push('/admin');
+  };
 
   // If on landing page or auth pages, do not render platform shell sidebar
   const isLandingPage = pathname === '/';
@@ -43,10 +66,10 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
     );
   }
 
-  // Admin Dedicated Workspace Navigation
+  // Pure Admin Navigation (No duplicate developer options)
   const adminNavSections: NavSection[] = [
     {
-      title: 'Governance & Operations',
+      title: 'Platform Governance',
       items: [
         {
           href: '/admin',
@@ -69,14 +92,9 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
             </svg>
           ),
         },
-      ],
-    },
-    {
-      title: 'Security & Ecosystem',
-      items: [
         {
           href: '/agents',
-          label: 'MCP Agent Audit & Tokens',
+          label: 'Agent Audits & MCP Tokens',
           icon: (
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -103,54 +121,9 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         },
       ],
     },
-    {
-      title: 'Developer Core (Dual Access)',
-      items: [
-        {
-          href: '/solutions',
-          label: 'Explore Solutions Feed',
-          icon: (
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-          ),
-        },
-        {
-          href: '/topics',
-          label: 'Topics & Taxonomy',
-          icon: (
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-              <polyline points="2 17 12 22 22 17"></polyline>
-              <polyline points="2 12 12 17 22 12"></polyline>
-            </svg>
-          ),
-        },
-        {
-          href: '/bookmarks',
-          label: 'My Saved Bookmarks',
-          icon: (
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-            </svg>
-          ),
-        },
-        {
-          href: '/profile',
-          label: 'Admin Profile & Stats',
-          icon: (
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-          ),
-        },
-      ],
-    },
   ];
 
-  // Standard Developer Workspace Navigation
+  // Pure Developer Navigation
   const developerNavSections: NavSection[] = [
     {
       title: 'Knowledge Core',
@@ -248,9 +221,8 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
     },
   ];
 
-  // Active navigation sections depending on role and admin view mode
-  const activeNavSections =
-    role === 'admin' && adminViewMode === 'admin' ? adminNavSections : developerNavSections;
+  const isInAdminMode = role === 'admin' && adminViewMode === 'admin';
+  const activeNavSections = isInAdminMode ? adminNavSections : developerNavSections;
 
   return (
     <div className="min-h-screen flex bg-[#fafafa] text-[#171717]">
@@ -269,7 +241,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
         }`}
       >
         <div className="flex flex-col h-full overflow-y-auto">
-          {/* Platform Brand Header */}
+          {/* Brand Header */}
           <div className="p-4 border-b border-[#e5e5e5] flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 group">
               <img
@@ -278,19 +250,12 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                 className="w-8 h-8 rounded-lg object-contain bg-black shadow-xs group-hover:scale-105 transition-transform"
               />
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-base font-bold tracking-tight text-[#171717]">
-                    {role === 'admin' && adminViewMode === 'admin' ? 'Admin Console' : 'Hunt Platform'}
-                  </span>
-                  {role === 'admin' && (
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#171717] text-white font-bold">
-                      PRO
-                    </span>
-                  )}
-                </div>
-                <span className="text-[10px] font-mono text-[#15803d] font-semibold flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#15803d] animate-pulse"></span>
-                  MCP Active
+                <span className="text-base font-bold tracking-tight text-[#171717]">
+                  {isInAdminMode ? 'Hunt Admin' : 'Hunt Platform'}
+                </span>
+                <span className="text-[10px] font-mono text-[#525252] font-semibold flex items-center gap-1.5">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isInAdminMode ? 'bg-[#2563eb]' : 'bg-[#15803d] animate-pulse'}`}></span>
+                  {isInAdminMode ? 'Governance Console' : 'MCP Active'}
                 </span>
               </div>
             </Link>
@@ -306,64 +271,61 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
             </button>
           </div>
 
-          {/* Admin Dual Mode Switcher: "Use as Developer" option */}
-          {role === 'admin' && (
+          {/* ADMIN MODE: Clear switch to Developer Platform */}
+          {role === 'admin' && isInAdminMode && (
             <div className="p-3 bg-[#f8fafc] border-b border-[#e5e5e5]">
-              <div className="flex items-center justify-between text-[11px] font-mono mb-1.5 px-1">
-                <span className="text-[#64748b] font-medium">Workspace View</span>
-                <span className="text-[#0f172a] font-bold capitalize">{adminViewMode} Mode</span>
-              </div>
-              <div className="grid grid-cols-2 gap-1 bg-[#e2e8f0]/80 p-1 rounded-xl text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => setAdminViewMode('admin')}
-                  className={`py-1.5 px-2 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    adminViewMode === 'admin'
-                      ? 'bg-white text-[#0f172a] shadow-xs font-bold'
-                      : 'text-[#64748b] hover:text-[#0f172a]'
-                  }`}
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                  </svg>
-                  <span>Admin</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAdminViewMode('developer')}
-                  className={`py-1.5 px-2 rounded-lg text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    adminViewMode === 'developer'
-                      ? 'bg-white text-[#2563eb] shadow-xs font-bold'
-                      : 'text-[#64748b] hover:text-[#0f172a]'
-                  }`}
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <button
+                type="button"
+                onClick={switchToDeveloperMode}
+                className="w-full py-2 px-3 bg-white hover:bg-[#eff6ff] border border-[#cbd5e1] hover:border-[#2563eb] rounded-xl text-xs font-semibold text-[#1e293b] hover:text-[#2563eb] transition-all flex items-center justify-between shadow-2xs group cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-[#2563eb]">
                     <polyline points="16 18 22 12 16 6"></polyline>
                     <polyline points="8 6 2 12 8 18"></polyline>
                   </svg>
-                  <span>Developer</span>
-                </button>
-              </div>
+                  <span>Use as Developer</span>
+                </div>
+                <span className="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              </button>
             </div>
           )}
 
-          {/* Primary Action Button */}
-          <div className="p-4 pb-2">
-            <Link
-              href="/problems/new"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold text-sm py-2.5 px-4 rounded-xl shadow-xs transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Document Problem
-            </Link>
-          </div>
+          {/* DEVELOPER MODE (When Admin): Clear indicator & switch back to Admin */}
+          {role === 'admin' && !isInAdminMode && (
+            <div className="p-3 bg-[#0f172a] text-white border-b border-[#1e293b]">
+              <div className="flex items-center justify-between text-[11px] mb-1.5 text-[#94a3b8]">
+                <span>Admin Operating as Developer</span>
+              </div>
+              <button
+                type="button"
+                onClick={switchToAdminMode}
+                className="w-full py-1.5 px-3 bg-[#1e293b] hover:bg-[#334155] text-white rounded-lg text-xs font-semibold transition-all flex items-center justify-between cursor-pointer"
+              >
+                <span>&larr; Return to Admin Console</span>
+                <span className="text-[10px] font-mono bg-[#38bdf8]/20 text-[#38bdf8] px-1 rounded">PRO</span>
+              </button>
+            </div>
+          )}
 
-          {/* Navigation Sections */}
+          {/* Primary Action Button (Only in Developer Mode) */}
+          {!isInAdminMode && (
+            <div className="p-4 pb-2">
+              <Link
+                href="/problems/new"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full flex items-center justify-center gap-2 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold text-sm py-2.5 px-4 rounded-xl shadow-xs transition-colors"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Document Problem
+              </Link>
+            </div>
+          )}
+
+          {/* Clean Navigation Sections (Zero duplicate links) */}
           <nav className="flex-1 p-4 space-y-6">
             {activeNavSections.map((section) => (
               <div key={section.title} className="space-y-1">
@@ -371,13 +333,13 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                   {section.title}
                 </div>
                 {section.items.map((item) => {
-                  const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                  const isActive = pathname === item.href || (item.href !== '/' && pathname === item.href);
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all ${
+                      className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                         isActive
                           ? 'bg-[#171717] text-white font-semibold shadow-xs'
                           : 'text-[#525252] hover:text-[#171717] hover:bg-[#f5f5f5]'
@@ -413,7 +375,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
                       {user.display_name}
                     </span>
                     <span className="text-[11px] font-mono text-[#737373]">
-                      @{user.username} {role === 'admin' && '(Admin & Dev)'}
+                      @{user.username} {role === 'admin' && '• Superuser'}
                     </span>
                   </div>
                 </Link>
@@ -469,7 +431,7 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
             {/* Quick Context Breadcrumb */}
             <div className="flex items-center gap-2 text-sm text-[#737373]">
               <span className="font-semibold text-[#171717]">
-                {role === 'admin' && adminViewMode === 'admin' ? 'Hunt Admin' : 'Hunt Platform'}
+                {isInAdminMode ? 'Hunt Admin' : 'Hunt Platform'}
               </span>
               <span>/</span>
               <span className="capitalize font-medium text-[#171717]">
@@ -479,37 +441,48 @@ export default function PlatformShell({ children }: { children: React.ReactNode 
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Quick indicator when admin is using Developer View */}
-            {role === 'admin' && adminViewMode === 'developer' && (
+            {isInAdminMode ? (
               <button
                 type="button"
-                onClick={() => setAdminViewMode('admin')}
-                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-[#bfdbfe] bg-[#eff6ff] text-xs font-mono text-[#2563eb] hover:bg-[#dbeafe] transition-colors cursor-pointer"
+                onClick={switchToDeveloperMode}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#cbd5e1] bg-white hover:bg-[#f8fafc] text-xs font-semibold text-[#1e293b] shadow-2xs transition-colors cursor-pointer"
               >
-                <span>Operating as Developer &bull; Return to Admin</span>
+                <span>Switch to Developer Platform</span>
                 <span>&rarr;</span>
               </button>
+            ) : (
+              <>
+                {role === 'admin' && (
+                  <button
+                    type="button"
+                    onClick={switchToAdminMode}
+                    className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-[#0f172a] bg-[#0f172a] text-white text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <span>🛡️ Admin Console</span>
+                  </button>
+                )}
+
+                <Link
+                  href="/solutions"
+                  className="hidden sm:flex items-center gap-2 bg-[#f5f5f5] hover:bg-[#ebebeb] border border-[#e5e5e5] rounded-lg px-3 py-1.5 text-xs text-[#737373] transition-colors"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <span>Quick search...</span>
+                  <span className="font-mono text-[10px] bg-white border border-[#e5e5e5] px-1.5 py-0.5 rounded text-[#525252]">⌘K</span>
+                </Link>
+
+                <Link
+                  href="/problems/new"
+                  className="flex items-center gap-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-xs"
+                >
+                  <span>+</span>
+                  <span>Document</span>
+                </Link>
+              </>
             )}
-
-            <Link
-              href="/solutions"
-              className="hidden sm:flex items-center gap-2 bg-[#f5f5f5] hover:bg-[#ebebeb] border border-[#e5e5e5] rounded-lg px-3 py-1.5 text-xs text-[#737373] transition-colors"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <span>Quick search...</span>
-              <span className="font-mono text-[10px] bg-white border border-[#e5e5e5] px-1.5 py-0.5 rounded text-[#525252]">⌘K</span>
-            </Link>
-
-            <Link
-              href="/problems/new"
-              className="flex items-center gap-1.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-xs"
-            >
-              <span>+</span>
-              <span>Document</span>
-            </Link>
           </div>
         </header>
 

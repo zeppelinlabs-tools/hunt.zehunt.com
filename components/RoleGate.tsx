@@ -13,7 +13,9 @@ export default function RoleGate({
   children: React.ReactNode;
 }) {
   const { role, loading } = useRole();
-  const allowed = allow.includes(role);
+  
+  // In the backend, Admin has full developer and administrative capabilities
+  const allowed = role === 'admin' || allow.includes(role);
 
   if (loading) {
     return (
@@ -40,7 +42,7 @@ export default function RoleGate({
           Access Restricted
         </h2>
         <p className="text-sm text-[#525252] max-w-sm mx-auto leading-relaxed">
-          <strong>{title}</strong> is restricted to {allow.join(' or ')} accounts. Please sign in to continue.
+          <strong>{title}</strong> requires a signed-in developer or administrator account.
         </p>
       </div>
 
