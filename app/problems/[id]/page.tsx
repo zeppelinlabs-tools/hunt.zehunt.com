@@ -78,7 +78,7 @@ export default function ProblemDetailPage() {
   };
 
   useEffect(() => {
-    fetch('/api/problems')
+    fetch('/api/v1/problems')
       .then(res => res.json())
       .then(d => {
         if (d.success && d.data) {
@@ -89,7 +89,7 @@ export default function ProblemDetailPage() {
       })
       .catch(console.error);
 
-    fetch('/api/user')
+    fetch('/api/v1/auth/me')
       .then(res => res.json())
       .then(d => {
         if (d.success) setCurrentUser(d.user);
@@ -124,7 +124,7 @@ export default function ProblemDetailPage() {
 
   const toggleBookmark = async () => {
     if (!isDeveloper) return;
-    const res = await fetch('/api/user', {
+    const res = await fetch('/api/v1/users/bookmarks', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'bookmark', problem })

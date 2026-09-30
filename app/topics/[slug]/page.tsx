@@ -25,18 +25,15 @@ export default function TopicDetailPage() {
   const [activeFilter, setActiveFilter] = useState<'all' | 'unsolved' | 'trending' | 'recent'>('all');
 
   useEffect(() => {
-    fetch('/api/problems')
+    fetch(`/api/v1/topics/${slug}`)
       .then(res => res.json())
       .then(d => {
-        if (d.success && d.data) {
-          const matched = d.data.filter((p: TopicProblemItem) =>
-            p.tags?.some((t: string) => t.toLowerCase() === topicName.toLowerCase())
-          );
-          setProblems(matched.length > 0 ? matched : d.data);
+        if (d.success && d.problems) {
+          setProblems(d.problems);
         }
       })
       .catch(console.error);
-  }, [topicName]);
+  }, [slug]);
 
   const filtered = problems.filter(p => {
     if (activeFilter === 'unsolved') return p.status !== 'Verified';

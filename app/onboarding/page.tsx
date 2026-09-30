@@ -28,10 +28,10 @@ export default function OnboardingPage() {
   };
 
   const handleFinish = async () => {
-    await fetch('/api/auth', {
+    await fetch('/api/v1/users/preferences', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'onboarding', preferences: selections })
+      body: JSON.stringify({ preferences: selections })
     });
     router.push('/');
   };

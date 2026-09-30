@@ -28,7 +28,7 @@ function SolutionsContent() {
   const [searchQuery, setSearchQuery] = useState<string>(initialQuery);
 
   useEffect(() => {
-    fetch('/api/problems')
+    fetch('/api/v1/problems')
       .then((res) => res.json())
       .then((d) => {
         if (d.success && d.data) setProblems(d.data);

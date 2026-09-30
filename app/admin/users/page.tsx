@@ -38,7 +38,7 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch('/api/admin/users');
+      const res = await fetch('/api/v1/admin/users');
       const data = await res.json();
       if (data.success && data.users) {
         setUsers(data.users);
@@ -65,7 +65,7 @@ export default function AdminUsersPage() {
     const reasonToSave = customReason.trim() || restrictReason;
 
     try {
-      const res = await fetch('/api/admin/users', {
+      const res = await fetch('/api/v1/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -105,7 +105,7 @@ export default function AdminUsersPage() {
   const handleUnrestrict = async (user: UserItem) => {
     setIsProcessing(true);
     try {
-      const res = await fetch('/api/admin/users', {
+      const res = await fetch('/api/v1/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

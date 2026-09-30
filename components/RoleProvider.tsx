@@ -57,21 +57,21 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
 
       if (newRole === 'developer') {
         setUser(MOCK_DEV_USER);
-        await fetch('/api/auth/signin', {
+        await fetch('/api/v1/auth/signin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: 'madnan@zehunt.com', password: 'dev123' }),
         }).catch(() => {});
       } else if (newRole === 'admin') {
         setUser(MOCK_ADMIN_USER);
-        await fetch('/api/auth/signin', {
+        await fetch('/api/v1/auth/signin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email: 'admin@hunt.zehunt.com', password: 'admin123' }),
         }).catch(() => {});
       } else {
         setUser(null);
-        await fetch('/api/auth/signout', { method: 'POST' }).catch(() => {});
+        await fetch('/api/v1/auth/signout', { method: 'POST' }).catch(() => {});
       }
     } catch (e) {
       console.error('Error switching role:', e);
@@ -80,7 +80,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
 
   const refreshSession = useCallback(async () => {
     try {
-      const res = await fetch('/api/auth/session', { cache: 'no-store' });
+      const res = await fetch('/api/v1/auth/me', { cache: 'no-store' });
       const data = await res.json();
       if (data?.authenticated && data?.user) {
         setUser(data.user);
@@ -129,7 +129,7 @@ export function RoleProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Verify session with server asynchronously
-    fetch('/api/auth/session', { cache: 'no-store' })
+    fetch('/api/v1/auth/me', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         if (data?.authenticated && data?.user) {

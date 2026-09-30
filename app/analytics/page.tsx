@@ -1,13 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import RoleGate from '@/components/RoleGate';
 
 export default function AnalyticsPage() {
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
+  const [analytics, setAnalytics] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/v1/analytics')
+      .then(res => res.json())
+      .then(d => {
+        if (d.success && d.analytics) {
+          setAnalytics(d.analytics);
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  if (!analytics) {
+    return (
+      <RoleGate allow={['admin']} title="Platform analytics">
+        <div className="text-center py-12">Loading analytics...</div>
+      </RoleGate>
+    );
+  }
 
   const stats = {
-    searches: 42390,
+    searches: analytics.problems_posted || 0,
     searchToClick: '68.4%',
     successfulResolutionRate: '84.2%',
     activeAgents: 142,

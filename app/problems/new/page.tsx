@@ -69,7 +69,7 @@ export default function NewProblemPage() {
       author: { username: 'madnan', display_name: 'Adnan Sultan' }
     };
 
-    const res = await fetch('/api/problems', {
+    const res = await fetch('/api/v1/problems', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)

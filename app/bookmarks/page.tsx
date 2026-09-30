@@ -15,11 +15,11 @@ export default function BookmarksPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   useEffect(() => {
-    fetch('/api/user')
+    fetch('/api/v1/users/bookmarks')
       .then(res => res.json())
       .then(d => {
-        if (d.success && d.user?.bookmarks) {
-          setBookmarks(d.user.bookmarks);
+        if (d.success && d.bookmarks) {
+          setBookmarks(d.bookmarks);
         }
       })
       .catch(console.error);

@@ -25,7 +25,7 @@ export default function AgentGatewayPage() {
   };
 
   useEffect(() => {
-    fetch('/api/mcp')
+    fetch('/api/v1/mcp')
       .then(res => res.json())
       .then(d => {
         if (d.success && d.audit) setLogs(d.audit);

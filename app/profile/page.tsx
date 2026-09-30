@@ -56,7 +56,7 @@ function ProfileContent() {
   const [activeTab, setActiveTab] = useState<'problems' | 'bookmarks'>('problems');
 
   useEffect(() => {
-    fetch('/api/user')
+    fetch('/api/v1/auth/me')
       .then(res => res.json())
       .then(d => {
         if (d.success && d.user) {
@@ -71,7 +71,7 @@ function ProfileContent() {
       })
       .catch(() => {});
 
-    fetch('/api/problems')
+    fetch('/api/v1/problems')
       .then(res => res.json())
       .then(d => {
         if (d.success && d.data) setProblems(d.data);

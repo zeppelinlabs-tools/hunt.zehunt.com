@@ -19,7 +19,7 @@ export default function SessionsPage() {
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/user')
+    fetch('/api/v1/auth/me')
       .then(res => res.json())
       .then(data => {
         if (data.success && data.sessions) {
@@ -35,20 +35,16 @@ export default function SessionsPage() {
   };
 
   const handleRevokeSession = async (id: string) => {
-    await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'revoke_session', sessionId: id })
+    await fetch(`/api/v1/auth/sessions/${id}`, {
+      method: 'DELETE',
     });
     setSessions(prev => prev.filter(s => s.id !== id));
     showToast('Session access terminated immediately');
   };
 
   const handleRevokeAllOther = async () => {
-    await fetch('/api/auth', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'revoke_other_sessions' })
+    await fetch('/api/v1/auth/sessions?action=revoke-all', {
+      method: 'DELETE',
     });
     setSessions(prev => prev.filter(s => s.is_current));
     showToast('All secondary client authorizations revoked');
@@ -56,10 +52,8 @@ export default function SessionsPage() {
 
   const handleDeleteAccount = async () => {
     if (confirm('Permanently delete account? This will revoke all active browser and AI-agent authorizations.')) {
-      await fetch('/api/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'delete_account' })
+      await fetch('/api/v1/users/account', {
+        method: 'DELETE',
       });
       showToast('Account marked as deleted');
       setTimeout(() => router.push('/auth/signin'), 800);
