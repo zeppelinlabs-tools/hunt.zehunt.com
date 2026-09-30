@@ -1,0 +1,31 @@
+        return `
+          <header class="app-header">
+            <div class="main-nav-bar">
+              <div class="brand-section" onclick="window.HuntApp.navigate('feed')">
+                <div class="brand-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </div>
+                Hunt
+              </div>
+              <nav class="module-nav">
+                ${tabs.map(t => `
+                  <button class="module-tab ${this.currentScreen === t.id ? 'active' : ''}" onclick="window.HuntApp.navigate('${t.id}')">
+                    <span class="badge">${t.badge}</span> ${t.label}
+                  </button>
+                `).join('')}
+              </nav>
+              <div class="header-actions">
+                <button class="btn-primary" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="window.HuntApp.navigate('create')">
+                  + Document Problem
+                </button>
+                <div class="user-pill" onclick="window.HuntApp.navigate('profile')">
+                  <div class="avatar-circle">MS</div>
+                  <span style="font-weight: 600;">@${this.currentUser.username}</span>
+                </div>
+              </div>
+            </div>
+          </header>
+        `;

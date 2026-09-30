@@ -1,0 +1,189 @@
+[
+  {
+    "id": 4821,
+    "title": "Supabase authentication fails after Vercel deployment",
+    "status": "Verified",
+    "context": "Next.js application using Supabase SSR authentication deployed on Vercel Serverless.",
+    "environment": {
+      "node": "v22.1.0",
+      "next": "Next.js 15.0.0",
+      "supabase": "@supabase/ssr 0.5.2",
+      "deployment": "Vercel Production"
+    },
+    "error": "HTTP 401 Unauthorized: Auth session missing or cookie invalid during Route Handler execution.",
+    "symptoms": [
+      "Works locally on localhost:3000.",
+      "Returns 401 in production on server action or API call."
+    ],
+    "attempts": [
+      {
+        "description": "Changed environment variables (regenerated Supabase Anon and Service Role keys)",
+        "result": "Failed",
+        "reason": "The issue was related to authentication cookies not propagating, not invalid API credentials."
+      },
+      {
+        "description": "Reinstalled dependencies and changed Node.js version from 22 to 20",
+        "result": "Failed",
+        "reason": "Persisted across all Node runtime versions."
+      },
+      {
+        "description": "Checked middleware matcher configuration and disabled route filters",
+        "result": "Failed",
+        "reason": "Static files loaded middleware but did not fix the session cookie synchronization."
+      }
+    ],
+    "root_cause": "Authentication cookie was not correctly propagated. In @supabase/ssr, cookie mutations cannot occur during Server Component rendering; response cookies must be copied back onto request headers inside middleware.ts.",
+    "solutions": [
+      {
+        "id": "sol_4821_a",
+        "title": "Solution A: Synchronize response cookies back to request headers in middleware",
+        "state": "Author Verified",
+        "code": "import { createServerClient } from '@supabase/ssr'\nimport { NextResponse, type NextRequest } from 'next/server'\n\nexport async function middleware(request: NextRequest) {\n  let response = NextResponse.next({ request: { headers: request.headers } })\n  const supabase = createServerClient(\n    process.env.NEXT_PUBLIC_SUPABASE_URL!,\n    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,\n    {\n      cookies: {\n        getAll() { return request.cookies.getAll() },\n        setAll(cookiesToSet) {\n          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))\n          response = NextResponse.next({ request })\n          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))\n        },\n      },\n    }\n  )\n  await supabase.auth.getUser()\n  return response\n}",
+        "why_it_works": "Ensures cookies mutated or refreshed by Supabase are visible to both Server Actions and downstream Route Handlers without dropping session credentials.",
+        "trade_offs": "Slight edge compute latency increase on first request to run getUser().",
+        "limitations": "Requires all routes with authenticated actions to pass through middleware matcher.",
+        "author": "alexander",
+        "confirmations_count": 8,
+        "last_confirmation": "September 29, 2026",
+        "verified_environments": ["Next.js 15.0.0", "Next.js 15.0.3", "Vercel Edge"]
+      },
+      {
+        "id": "sol_4821_b",
+        "title": "Solution B (Alternative approach): Pre-fetch session JWT inside custom Route Handler",
+        "state": "Proposed",
+        "code": "export async function GET(request: Request) {\n  const token = request.headers.get('authorization')?.replace('Bearer ', '')\n  if (!token) return new Response('Unauthorized', { status: 401 })\n  // Validate token directly via Supabase Auth admin API...\n}",
+        "why_it_works": "Bypasses browser cookie handling in favor of explicit Bearer token headers.",
+        "trade_offs": "Requires manual token refresh logic on the client; not idiomatic for SSR forms.",
+        "limitations": "Does not support standard Next.js form actions with cookies.",
+        "author": "kenji",
+        "confirmations_count": 2,
+        "last_confirmation": "September 28, 2026",
+        "verified_environments": ["Next.js 15.0", "Node 22"]
+      }
+    ],
+    "verification": {
+      "verified_by": "alexander (Author) + 8 Community Developers",
+      "verified_at": "September 29, 2026",
+      "environment": "Next.js 15.0 + Vercel Production",
+      "version": "15.0.0",
+      "confirmation_count": 8
+    },
+    "tags": ["Next.js", "Supabase", "Vercel", "Authentication", "Cookies", "HTTP 401"],
+    "author": {
+      "username": "alexander",
+      "display_name": "Alexander Vance",
+      "bio": "Full stack engineer working on Next.js + serverless."
+    },
+    "helpful_votes": 14,
+    "created_at": "September 29, 2026",
+    "discussions": [
+      {
+        "id": "disc_01",
+        "author": "dev_kelsey",
+        "type": "Confirmation",
+        "content": "Can confirm this fixed our team's staging deployment on Vercel! We lost 6 hours debugging key rotations before finding this exact middleware cookie mutation rule.",
+        "version_reported": "Next.js 15.0.2",
+        "time_ago": "1 day ago",
+        "votes": 5
+      },
+      {
+        "id": "disc_02",
+        "author": "marcus_io",
+        "type": "Experience",
+        "content": "Be careful to ensure your middleware matcher excludes _next/static or you will run getUser() on every CSS and chunk download.",
+        "version_reported": "Next.js 15.0.0",
+        "time_ago": "18 hours ago",
+        "votes": 9
+      }
+    ]
+  },
+  {
+    "id": 4819,
+    "title": "Neon Postgres connection pool exhaustion during Next.js Turbopack dev rebuilds",
+    "status": "Verified",
+    "context": "Next.js 15 local dev environment with Prisma connecting to serverless Neon PostgreSQL.",
+    "environment": {
+      "node": "v20.14.0",
+      "next": "Next.js 15.0.0",
+      "database": "Neon PostgreSQL",
+      "orm": "Prisma 5.19"
+    },
+    "error": "FATAL: remaining connection slots are reserved for non-replication superuser connections.",
+    "symptoms": [
+      "Hot module reload opens duplicate connection pools.",
+      "Connection pool exhausts after saving 5-6 edits."
+    ],
+    "attempts": [
+      {
+        "description": "Increased max connection limits in database settings",
+        "result": "Failed",
+        "reason": "Turbopack fast reload spawned new processes faster than TCP idle timeouts could reclaim sockets."
+      }
+    ],
+    "root_cause": "Next.js dev rebuilds re-evaluate module scopes, instantiating new PrismaClient connections unless attached to the globalThis singleton object.",
+    "solutions": [
+      {
+        "id": "sol_4819_a",
+        "title": "Solution: Bind Prisma client instance to globalThis singleton",
+        "state": "Author Verified",
+        "code": "const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }\nexport const prisma = globalForPrisma.prisma ?? new PrismaClient()\nif (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma",
+        "why_it_works": "Prevents creating new TCP connections on hot module reloads.",
+        "trade_offs": "None.",
+        "limitations": "Applicable only to Node runtimes, not Edge workers.",
+        "author": "sarah_dev",
+        "confirmations_count": 5,
+        "last_confirmation": "September 27, 2026",
+        "verified_environments": ["Node 20", "Next.js 15", "Neon Serverless"]
+      }
+    ],
+    "verification": {
+      "verified_by": "sarah_dev",
+      "verified_at": "September 27, 2026",
+      "environment": "Neon + Next.js 15",
+      "version": "Prisma 5.19",
+      "confirmation_count": 5
+    },
+    "tags": ["Neon", "PostgreSQL", "Prisma", "Next.js", "Connection Pooling"],
+    "author": { "username": "sarah_dev", "display_name": "Sarah Chen" },
+    "helpful_votes": 27,
+    "created_at": "September 27, 2026",
+    "discussions": []
+  },
+  {
+    "id": 4812,
+    "title": "Claude Desktop MCP server hangs on Windows stdio transport over WSL2",
+    "status": "Investigating",
+    "context": "Configuring Model Context Protocol server inside WSL2 with Windows desktop client.",
+    "environment": {
+      "os": "Windows 11 + WSL2 Ubuntu 24.04",
+      "client": "Claude Desktop v0.7.1",
+      "transport": "stdio (wsl.exe -e)"
+    },
+    "error": "Process spawned without stdout flush; JSON-RPC handshake timed out.",
+    "symptoms": [
+      "Claude Desktop shows agent connecting indefinitely.",
+      "No tool declarations returned in UI."
+    ],
+    "attempts": [
+      {
+        "description": "Added --no-deprecation flag to node runner",
+        "result": "Failed",
+        "reason": "Pipe buffering issue was transport-related."
+      }
+    ],
+    "root_cause": "Windows wsl.exe stdio stream doesn't autoflush line-delimited JSON-RPC messages without explicit UTF-8 line endings.",
+    "solutions": [],
+    "verification": {
+      "verified_by": "Unverified",
+      "verified_at": null,
+      "environment": "WSL2 Ubuntu",
+      "version": "0.7.1",
+      "confirmation_count": 0
+    },
+    "tags": ["MCP", "WSL2", "Claude", "Node.js", "Windows"],
+    "author": { "username": "kenji", "display_name": "Kenji Sato" },
+    "helpful_votes": 9,
+    "created_at": "Yesterday",
+    "discussions": []
+  }
+]

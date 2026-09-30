@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hunt — Module M01 Identity & Authentication Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #fafafa;
+      --surface: #ffffff;
+      --surface-subtle: #f5f5f5;
+      --surface-hover: #f1f1f1;
+
+      --border: #e5e5e5;
+      --border-strong: #d4d4d4;
+
+      --text-primary: #171717;
+      --text-secondary: #525252;
+      --text-muted: #737373;
+
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-subtle: #eff6ff;
+
+      --success: #15803d;
+      --success-subtle: #f0fdf4;
+
+      --warning: #a16207;
+      --warning-subtle: #fefce8;
+
+      --danger: #b91c1c;
+      --danger-subtle: #fef2f2;
+
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 10px;
+
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    /* Top Prototype Toolbar */
+    .proto-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .proto-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .proto-badge {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .proto-nav {
+      display: flex;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      gap: 2px;
+      overflow-x: auto;
+    }
+
+    .proto-nav-btn {
+      background: transparent;
+      border: none;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .proto-nav-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .proto-nav-btn.active {
+      background: var(--surface);
+      color: var(--text-primary);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    /* Main Container */
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+    }
+
+    .view-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 420px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: none;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .view-card.wide {
+      max-width: 760px;
+    }
+
+    .view-card.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Headers & Typography */
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text-primary);
+      letter-spacing: -0.03em;
+    }
+
+    .brand-logo svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .view-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .view-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.45;
+    }
+
+    /* Social Auth Buttons */
+    .oauth-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-oauth {
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-oauth:hover {
+      background: var(--surface-subtle);
+      border-color: var(--border-strong);
+    }
+
+    .btn-oauth svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .divider span {
+      padding: 0 12px;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .form-link {
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .form-link:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .input-prefix {
+      position: absolute;
+      left: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .form-input.has-prefix {
+      padding-left: 110px;
+    }
+
+    /* Primary CTA */
+    .btn-primary {
+      width: 100%;
+      height: 40px;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      height: 40px;
+      background: var(--surface-subtle);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface-hover);
+      border-color: var(--border-strong);
+    }
+
+    .view-footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Password strength indicator */
+    .strength-meter {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .strength-bar {
+      height: 3px;
+      flex: 1;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 0.2s ease;
+    }
+
+    .strength-bar.active {
+      background: var(--success);
+    }
+
+    .strength-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Notice & Alert Boxes */
+    .notice-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .notice-box.info {
+      background: var(--accent-subtle);
+      border-color: #bfdbfe;
+      color: #1e40af;
+    }
+
+    .notice-box.success {
+      background: var(--success-subtle);
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .notice-box.danger {
+      background: var(--danger-subtle);
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    /* Settings & Sessions view styles */
+    .section-header {
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .badge-pill.active {
+      background: var(--accent-subtle);
+      border-color: #bfdbfe;
+      color: var(--accent);
+    }
+
+    .table-container {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    table.data-table th {
+      background: var(--surface-subtle);
+      color: var(--text-secondary);
+      font-weight: 600;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .mono-cell {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .btn-action-revoke {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-action-revoke:hover {
+      background: var(--danger-subtle);
+      border-color: #fca5a5;
+      color: var(--danger);
+    }
+
+    .danger-zone {
+      border: 1px solid #fecaca;
+      background: #fffafa;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-danger:hover {
+      background: #991b1b;
+    }
+
+    /* Feedback Modal (Prototype Simulation) */
+    .sim-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text-primary);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-family: var(--font-mono);
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 100;
+    }
+
+    .sim-toast.show {
+      display: inline-flex;
+      animation: toastIn 0.2s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Prototype Control Header -->
+  <header class="proto-bar">
+    <div class="proto-brand">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      Hunt
+      <span class="proto-badge">M01 // Auth UI Prototype</span>
+    </div>
+
+    <!-- Navigation Switcher for Screens -->
+    <nav class="proto-nav">
+      <button class="proto-nav-btn active" onclick="switchView('signin')">1. Sign In</button>
+      <button class="proto-nav-btn" onclick="switchView('signup')">2. Sign Up</button>
+      <button class="proto-nav-btn" onclick="switchView('verify')">3. Email Verification</button>
+      <button class="proto-nav-btn" onclick="switchView('forgot')">4. Password Reset</button>
+      <button class="proto-nav-btn" onclick="switchView('sessions')">5. Sessions & Security</button>
+    </nav>
+  </header>
+
+  <main class="stage">
+
+    <!-- 1. SIGN IN SCREEN -->
+    <section id="view-signin" class="view-card active">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Hunt
+      </div>
+      <h1 class="view-title">Sign in to Hunt</h1>
+      <p class="view-desc">Authenticate to track verified solutions, access knowledge graphs, and configure agent tokens.</p>
+
+      <div class="oauth-stack">
+        <button class="btn-oauth" onclick="triggerToast('Redirecting to GitHub OAuth...')">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          Continue with GitHub
+        </button>
+        <button class="btn-oauth" onclick="triggerToast('Redirecting to Google OAuth...')">
+          <svg viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          Continue with Google
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>or sign in with email</span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); triggerToast('Signing in with credentials...');">
+        <div class="form-group">
+          <label class="form-label" for="signin-email">Email address</label>
+          <input type="email" id="signin-email" class="form-input" placeholder="alex@domain.io" required>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="signin-pass">Password</label>
+            <a href="javascript:void(0)" onclick="switchView('forgot')" class="form-link">Forgot password?</a>
+          </div>
+          <input type="password" id="signin-pass" class="form-input" placeholder="••••••••••••••••" required>
+        </div>
+
+        <button type="submit" class="btn-primary">Sign In</button>
+      </form>
+
+      <div class="view-footer">
+        Don't have an account? <a href="javascript:void(0)" onclick="switchView('signup')" class="form-link">Sign up</a>
+      </div>
+    </section>
+
+    <!-- 2. SIGN UP SCREEN -->
+    <section id="view-signup" class="view-card">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Hunt
+      </div>
+      <h1 class="view-title">Create your Hunt account</h1>
+      <p class="view-desc">Join developers documenting root causes, solutions, and reproducible engineering knowledge.</p>
+
+      <div class="oauth-stack">
+        <button class="btn-oauth" onclick="triggerToast('Initiating GitHub registration...')">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          Sign up with GitHub
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>or register with email</span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); switchView('verify');">
+        <div class="form-group">
+          <label class="form-label" for="signup-email">Work or personal email</label>
+          <input type="email" id="signup-email" class="form-input" placeholder="dev@subdomain.org" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="signup-username">Developer handle</label>
+          <div class="input-wrapper">
+            <span class="input-prefix">hunt.dev/@</span>
+            <input type="text" id="signup-username" class="form-input has-prefix" placeholder="alexander" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="signup-pass">Master password</label>
+          <input type="password" id="signup-pass" class="form-input" placeholder="Minimum 8 characters" oninput="updateStrength(this.value)" required>
+          <div class="strength-meter">
+            <div id="bar-1" class="strength-bar"></div>
+            <div id="bar-2" class="strength-bar"></div>
+            <div id="bar-3" class="strength-bar"></div>
+            <div id="bar-4" class="strength-bar"></div>
+          </div>
+          <div class="strength-hint">Use 8+ chars with a mix of numbers & symbols.</div>
+        </div>
+
+        <button type="submit" class="btn-primary">Create Account</button>
+      </form>
+
+      <div class="view-footer">
+        Already registered? <a href="javascript:void(0)" onclick="switchView('signin')" class="form-link">Sign in</a>
+      </div>
+    </section>
+
+    <!-- 3. EMAIL VERIFICATION SCREEN -->
+    <section id="view-verify" class="view-card">
+      <div style="margin-bottom: 20px; color: var(--accent);">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+        </svg>
+      </div>
+      <h1 class="view-title">Verify your email address</h1>
+      <p class="view-desc">
+        We dispatched a cryptographic verification link to <strong style="color: var(--text-primary);">dev@subdomain.org</strong>.
+      </p>
+
+      <div class="notice-box info">
+        <span>Click the link in the message to activate your session and enable agent execution tokens.</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn-secondary" onclick="triggerToast('Verification link re-sent to dev@subdomain.org')">
+          Resend email link
+        </button>
+        <button class="btn-primary" onclick="switchView('sessions'); triggerToast('Account verified successfully!');">
+          Simulate clicking verification link
+        </button>
+      </div>
+
+      <div class="view-footer">
+        Wrong email? <a href="javascript:void(0)" onclick="switchView('signup')" class="form-link">Change address</a>
+      </div>
+    </section>
+
+    <!-- 4. PASSWORD RESET SCREEN -->
+    <section id="view-forgot" class="view-card">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Hunt
+      </div>
+      <h1 class="view-title">Account Recovery</h1>
+      <p class="view-desc">Enter your verified email. If registered, we will send a password reset instruction immediately.</p>
+
+      <div id="reset-form-container">
+        <form onsubmit="event.preventDefault(); showResetNotice();">
+          <div class="form-group">
+            <label class="form-label" for="reset-email">Account email</label>
+            <input type="email" id="reset-email" class="form-input" placeholder="alex@domain.io" required>
+          </div>
+
+          <button type="submit" class="btn-primary">Send Recovery Link</button>
+        </form>
+      </div>
+
+      <div id="reset-success-box" style="display: none;">
+        <div class="notice-box success">
+          <span>If an account with that email exists, an instruction link has been sent. Check spam folders if not received within 2 minutes.</span>
+        </div>
+      </div>
+
+      <div class="view-footer">
+        Remembered password? <a href="javascript:void(0)" onclick="switchView('signin')" class="form-link">Return to sign in</a>
+      </div>
+    </section>
+
+    <!-- 5. SESSIONS & ACCOUNT SECURITY (Authenticated settings view) -->
+    <section id="view-sessions" class="view-card wide">
+      <div class="section-header">
+        <div>
+          <h1 class="view-title">Security & Active Sessions</h1>
+          <p class="view-desc" style="margin-bottom: 0;">Authorized clients, browser sessions, and automated AI agent tokens.</p>
+        </div>
+        <div style="text-align: right;">
+          <span class="badge-pill active">status: active</span>
+          <div class="mono-cell" style="margin-top: 4px;">user_id: usr_01h8q2...</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 13px; font-weight: 600;">Active Client Instances</h3>
+        <button class="btn-action-revoke" onclick="triggerToast('Revoked all remote sessions!')">Revoke all others</button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Client / Device</th>
+              <th>IP & Context</th>
+              <th>Last Seen</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="font-weight: 600;">Chrome 124 / macOS</div>
+                <div class="mono-cell">Session ID: sess_981a...</div>
+              </td>
+              <td>
+                <div>192.168.1.42 (San Francisco, US)</div>
+                <div class="mono-cell">Current Device</div>
+              </td>
+              <td><span class="badge-pill active">Active now</span></td>
+              <td style="text-align: right;">
+                <span class="mono-cell" style="color: var(--text-muted);">Current</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-weight: 600;">Hunt AI Investigation Agent</div>
+                <div class="mono-cell">Scope: search:read, trace:write</div>
+              </td>
+              <td>
+                <div>Automated Worker (AWS us-east-1)</div>
+                <div class="mono-cell">Service Token</div>
+              </td>
+              <td>14 mins ago</td>
+              <td style="text-align: right;">
+                <button class="btn-action-revoke" onclick="this.closest('tr').remove(); triggerToast('Agent token revoked!');">Revoke</button>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div style="font-weight: 600;">zehunt-cli v0.4.1</div>
+                <div class="mono-cell">Linux x86_64</div>
+              </td>
+              <td>104.28.19.12 (Frankfurt, DE)</td>
+              <td>2 days ago</td>
+              <td style="text-align: right;">
+                <button class="btn-action-revoke" onclick="this.closest('tr').remove(); triggerToast('CLI session revoked!');">Revoke</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="danger-zone">
+        <div>
+          <h4 style="font-size: 13px; font-weight: 600; color: var(--danger); margin-bottom: 4px;">Delete Account</h4>
+          <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">
+            Permanently invalidate credentials and invalidate all agent access. User status will become <code>deleted</code>.
+          </p>
+        </div>
+        <button class="btn-danger" onclick="confirmAccountDeletion()">Delete Account</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Interactive Action Toast Notification -->
+  <div id="sim-toast" class="sim-toast">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span id="sim-toast-msg">Action performed</span>
+  </div>
+
+  <script>
+    // Tab / View Switcher
+    function switchView(viewKey) {
+      document.querySelectorAll('.view-card').forEach(card => card.classList.remove('active'));
+      document.querySelectorAll('.proto-nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      const targetCard = document.getElementById(`view-${viewKey}`);
+      if (targetCard) targetCard.classList.add('active');
+
+      const btnIndex = ['signin', 'signup', 'verify', 'forgot', 'sessions'].indexOf(viewKey);
+      if (btnIndex >= 0) {
+        document.querySelectorAll('.proto-nav-btn')[btnIndex].classList.add('active');
+      }
+    }
+
+    // Password strength visual indicator
+    function updateStrength(value) {
+      const bars = [
+        document.getElementById('bar-1'),
+        document.getElementById('bar-2'),
+        document.getElementById('bar-3'),
+        document.getElementById('bar-4')
+      ];
+
+      bars.forEach(b => b.classList.remove('active'));
+
+      if (value.length >= 2) bars[0].classList.add('active');
+      if (value.length >= 6) bars[1].classList.add('active');
+      if (value.length >= 8 && /[0-9]/.test(value)) bars[2].classList.add('active');
+      if (value.length >= 10 && /[^A-Za-z0-9]/.test(value)) bars[3].classList.add('active');
+    }
+
+    // Trigger prototype feedback toast
+    let toastTimeout;
+    function triggerToast(message) {
+      const toast = document.getElementById('sim-toast');
+      const toastMsg = document.getElementById('sim-toast-msg');
+      toastMsg.textContent = message;
+      toast.classList.add('show');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2600);
+    }
+
+    function showResetNotice() {
+      document.getElementById('reset-form-container').style.display = 'none';
+      document.getElementById('reset-success-box').style.display = 'block';
+      triggerToast('Password reset email dispatched.');
+    }
+
+    function confirmAccountDeletion() {
+      const ok = confirm("Are you sure? Deleted accounts are immediately blocked from authentication and all active agent tokens are revoked.");
+      if (ok) {
+        triggerToast("Account marked status=deleted. Redirecting to sign in...");
+        setTimeout(() => switchView('signin'), 1200);
+      }
+    }
+  </script>
+</body>
+</html>

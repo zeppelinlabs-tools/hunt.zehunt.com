@@ -1,5 +1,4 @@
-@import "tailwindcss";
-
+/* Hunt Design System Tokens & Base CSS */
 :root {
   --background: #fafafa;
   --surface: #ffffff;
@@ -37,17 +36,22 @@
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
+  font-family: var(--font-sans);
   background-color: var(--background);
   color: var(--text-primary);
-  font-family: var(--font-sans);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
 }
 
 .mono { font-family: var(--font-mono); }
 
+/* Common utility components */
 .badge-tag {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -90,6 +94,7 @@ body {
   padding: 0 16px;
   font-size: 13px;
   font-weight: 600;
+  font-family: var(--font-sans);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -109,6 +114,7 @@ body {
   padding: 0 16px;
   font-size: 13px;
   font-weight: 500;
+  font-family: var(--font-sans);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -124,7 +130,7 @@ body {
 .filter-btn {
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 5px 12px;
+  padding: 4px 10px;
   border-radius: var(--radius-sm);
   font-size: 12px;
   color: var(--text-secondary);
@@ -159,6 +165,7 @@ body {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 9px 12px;
+  font-family: var(--font-sans);
   font-size: 13px;
   color: var(--text-primary);
   outline: none;
