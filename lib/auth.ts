@@ -10,7 +10,7 @@ export interface UserRecord {
   display_name: string;
   role: Exclude<PlatformRole, 'guest'>;
   password: string;
-  status: 'active' | 'deleted' | 'disabled';
+  status: 'active' | 'restricted' | 'deleted' | 'disabled';
   bio?: string;
   skills?: string[];
   technologies?: string[];
@@ -19,6 +19,8 @@ export interface UserRecord {
   stats?: Record<string, number>;
   bookmarks?: { id: number; title: string; category: string }[];
   onboarding?: Record<string, string[]>;
+  restriction_reason?: string;
+  restricted_at?: string;
 }
 
 export interface DeviceSessionRecord {

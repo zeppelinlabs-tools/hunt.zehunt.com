@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import RoleGate from '@/components/RoleGate';
 
 export default function AdminPage() {
@@ -32,21 +33,36 @@ export default function AdminPage() {
   return (
     <RoleGate allow={['admin']} title="Admin console">
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-[#171717]">
-            Administration &amp; Platform Governance
-          </h1>
-          <p className="text-base text-[#525252] mt-1">
-            System health, secret moderation pipeline, user accounts, and MCP gateway metrics.
-          </p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#171717]">
+              Administration &amp; Platform Governance
+            </h1>
+            <p className="text-base text-[#525252] mt-1">
+              System health, secret moderation pipeline, user accounts, and MCP gateway metrics.
+            </p>
+          </div>
+          <Link
+            href="/admin/users"
+            className="px-4 py-2 bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-xl text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5"
+          >
+            <span>Developer Governance &amp; Restrictions</span>
+            <span>&rarr;</span>
+          </Link>
         </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
-            <div className="text-3xl font-bold text-[#171717]">{metrics.totalUsers}</div>
+          <Link
+            href="/admin/users"
+            className="bg-white hover:bg-[#f8fafc] border border-[#e5e5e5] hover:border-[#cbd5e1] p-5 rounded-2xl shadow-xs transition-all block group"
+          >
+            <div className="flex justify-between items-start">
+              <div className="text-3xl font-bold text-[#171717]">{metrics.totalUsers}</div>
+              <span className="text-xs text-[#2563eb] group-hover:translate-x-0.5 transition-transform font-mono">Manage &rarr;</span>
+            </div>
             <div className="text-sm text-[#737373] mt-1 font-medium">Registered Developers</div>
-          </div>
+          </Link>
           <div className="bg-white border border-[#e5e5e5] p-5 rounded-2xl shadow-xs">
             <div className="text-3xl font-bold text-[#171717]">{metrics.totalProblems}</div>
             <div className="text-sm text-[#737373] mt-1 font-medium">Problems Logged</div>

@@ -1,147 +1,206 @@
-{
-  "users": [
-    {
-      "id": "usr_dev_01",
-      "email": "madnan@zehunt.com",
-      "username": "madnan",
-      "display_name": "Adnan Sultan",
-      "role": "developer",
-      "password": "dev123",
-      "status": "active",
-      "bio": "Staff Software Engineer. Building distributed AI systems, Next.js architecture, and database infrastructure.",
-      "skills": [
-        "TypeScript",
-        "Next.js",
-        "PostgreSQL",
-        "Neon",
-        "Distributed Systems",
-        "MCP"
-      ],
-      "technologies": [
-        "React 19",
-        "Prisma",
-        "Docker",
-        "Node 22",
-        "Tailwind CSS"
-      ],
-      "website": "https://zehunt.com",
-      "github": "https://github.com/zehunt",
-      "stats": {
-        "problems_count": 14,
-        "solutions_count": 29,
-        "confirmations_count": 118,
-        "helpful_votes": 342,
-        "connected_agents_count": 4
-      },
-      "bookmarks": [
-        {
-          "id": 4821,
-          "title": "Supabase authentication fails after Vercel deployment",
-          "category": "Authentication"
-        },
-        {
-          "id": 4819,
-          "title": "Neon Postgres connection pool exhaustion during Next.js dev",
-          "category": "Databases"
-        }
-      ],
-      "onboarding": {
-        "build": [
-          "Web",
-          "Backend",
-          "Cloud"
-        ],
-        "problems": [
-          "Authentication",
-          "Deployment",
-          "Postgres / Neon"
-        ],
-        "tools": [
-          "VS Code",
-          "Cursor",
-          "Claude"
-        ]
-      }
-    },
-    {
-      "id": "usr_admin_01",
-      "email": "admin@hunt.zehunt.com",
-      "username": "admin",
-      "display_name": "Hunt Admin",
-      "role": "admin",
-      "password": "admin123",
-      "status": "active",
-      "bio": "Platform manager and trust governance lead.",
-      "skills": [
-        "Moderation",
-        "Security",
-        "Operations"
-      ],
-      "technologies": [
-        "MCP",
-        "Neon",
-        "Next.js"
-      ],
-      "website": "https://hunt.zehunt.com",
-      "github": "https://github.com/zehunt",
-      "stats": {
-        "problems_count": 0,
-        "solutions_count": 0,
-        "confirmations_count": 0,
-        "helpful_votes": 0,
-        "connected_agents_count": 0
-      },
-      "bookmarks": [],
-      "onboarding": {
-        "build": [
-          "Platform"
-        ],
-        "problems": [
-          "Governance"
-        ],
-        "tools": [
-          "Admin Console"
-        ]
-      }
-    }
-  ],
-  "sessions": [
-    {
-      "id": "sess_01",
-      "user_id": "usr_dev_01",
-      "device": "Chrome 124 / macOS",
-      "ip": "192.168.1.42 (San Francisco, US)",
-      "type": "browser",
-      "is_current": true,
-      "last_seen": "Active now"
-    },
-    {
-      "id": "sess_02",
-      "user_id": "usr_dev_01",
-      "device": "Hunt AI Investigation Agent",
-      "ip": "Worker us-east-1",
-      "type": "agent",
-      "scope": "knowledge:read, attempts:read",
-      "is_current": false,
-      "last_seen": "14 mins ago"
-    },
-    {
-      "id": "sess_03",
-      "user_id": "usr_dev_01",
-      "device": "zehunt-cli v0.4.1",
-      "ip": "104.28.19.12 (Frankfurt, DE)",
-      "type": "cli",
-      "is_current": false,
-      "last_seen": "2 days ago"
-    }
-  ],
-  "authSessions": [
-    {
-      "token": "93c797ff-0cce-4a70-b7bf-7993f88eb63c",
-      "user_id": "usr_admin_01",
-      "role": "admin",
-      "created_at": "2026-09-30T00:23:39.511Z",
-      "expires_at": "2026-10-07T00:23:39.511Z"
-    }
-  ]
+﻿{
+    "users":  [
+                  {
+                      "id":  "usr_dev_01",
+                      "email":  "madnan@zehunt.com",
+                      "username":  "madnan",
+                      "display_name":  "Adnan Sultan",
+                      "role":  "developer",
+                      "password":  "dev123",
+                      "status":  "active",
+                      "bio":  "Staff Software Engineer. Building distributed AI systems, Next.js architecture, and database infrastructure.",
+                      "skills":  [
+                                     "TypeScript",
+                                     "Next.js",
+                                     "PostgreSQL",
+                                     "Neon",
+                                     "Distributed Systems",
+                                     "MCP"
+                                 ],
+                      "technologies":  [
+                                           "React 19",
+                                           "Prisma",
+                                           "Docker",
+                                           "Node 22",
+                                           "Tailwind CSS"
+                                       ],
+                      "website":  "https://zehunt.com",
+                      "github":  "https://github.com/zehunt",
+                      "stats":  {
+                                    "problems_count":  14,
+                                    "solutions_count":  29,
+                                    "confirmations_count":  118,
+                                    "helpful_votes":  342,
+                                    "connected_agents_count":  4
+                                },
+                      "bookmarks":  [
+                                        {
+                                            "id":  4821,
+                                            "title":  "Supabase authentication fails after Vercel deployment",
+                                            "category":  "Authentication"
+                                        },
+                                        {
+                                            "id":  4819,
+                                            "title":  "Neon Postgres connection pool exhaustion during Next.js dev",
+                                            "category":  "Databases"
+                                        }
+                                    ],
+                      "onboarding":  {
+                                         "build":  [
+                                                       "Web",
+                                                       "Backend",
+                                                       "Cloud"
+                                                   ],
+                                         "problems":  [
+                                                          "Authentication",
+                                                          "Deployment",
+                                                          "Postgres / Neon"
+                                                      ],
+                                         "tools":  [
+                                                       "VS Code",
+                                                       "Cursor",
+                                                       "Claude"
+                                                   ]
+                                     }
+                  },
+                  {
+                      "id":  "usr_admin_01",
+                      "email":  "admin@hunt.zehunt.com",
+                      "username":  "admin",
+                      "display_name":  "Hunt Admin",
+                      "role":  "admin",
+                      "password":  "admin123",
+                      "status":  "active",
+                      "bio":  "Platform manager and trust governance lead.",
+                      "skills":  [
+                                     "Moderation",
+                                     "Security",
+                                     "Operations"
+                                 ],
+                      "technologies":  [
+                                           "MCP",
+                                           "Neon",
+                                           "Next.js"
+                                       ],
+                      "website":  "https://hunt.zehunt.com",
+                      "github":  "https://github.com/zehunt",
+                      "stats":  {
+                                    "problems_count":  0,
+                                    "solutions_count":  0,
+                                    "confirmations_count":  0,
+                                    "helpful_votes":  0,
+                                    "connected_agents_count":  0
+                                },
+                      "bookmarks":  [
+
+                                    ],
+                      "onboarding":  {
+                                         "build":  [
+                                                       "Platform"
+                                                   ],
+                                         "problems":  [
+                                                          "Governance"
+                                                      ],
+                                         "tools":  [
+                                                       "Admin Console"
+                                                   ]
+                                     }
+                  },
+                  {
+                      "id":  "usr_dev_02",
+                      "email":  "alex@devlabs.io",
+                      "username":  "alex_dev",
+                      "display_name":  "Alex Rivera",
+                      "role":  "developer",
+                      "password":  "password123",
+                      "status":  "active",
+                      "bio":  "Full-stack engineer focusing on TypeScript, Next.js, and Supabase.",
+                      "skills":  [
+                                     "TypeScript",
+                                     "Supabase",
+                                     "React"
+                                 ],
+                      "technologies":  [
+                                           "Next.js 15",
+                                           "Tailwind CSS"
+                                       ],
+                      "stats":  {
+                                    "problems_count":  8,
+                                    "solutions_count":  12,
+                                    "confirmations_count":  45,
+                                    "helpful_votes":  89,
+                                    "connected_agents_count":  2
+                                },
+                      "bookmarks":  [
+
+                                    ]
+                  },
+                  {
+                      "id":  "usr_dev_03",
+                      "email":  "spambot@unverified.org",
+                      "username":  "auto_crawler_x",
+                      "display_name":  "Automated Crawler",
+                      "role":  "developer",
+                      "password":  "password123",
+                      "status":  "restricted",
+                      "restriction_reason":  "Repetitive duplicate problems detected by moderation",
+                      "restricted_at":  "2026-09-28T14:32:00Z",
+                      "bio":  "Scripted account",
+                      "skills":  [
+
+                                 ],
+                      "technologies":  [
+
+                                       ],
+                      "stats":  {
+                                    "problems_count":  3,
+                                    "solutions_count":  1,
+                                    "confirmations_count":  0,
+                                    "helpful_votes":  0,
+                                    "connected_agents_count":  1
+                                },
+                      "bookmarks":  [
+
+                                    ]
+                  }
+              ],
+    "sessions":  [
+                     {
+                         "id":  "sess_01",
+                         "user_id":  "usr_dev_01",
+                         "device":  "Chrome 124 / macOS",
+                         "ip":  "192.168.1.42 (San Francisco, US)",
+                         "type":  "browser",
+                         "is_current":  true,
+                         "last_seen":  "Active now"
+                     },
+                     {
+                         "id":  "sess_02",
+                         "user_id":  "usr_dev_01",
+                         "device":  "Hunt AI Investigation Agent",
+                         "ip":  "Worker us-east-1",
+                         "type":  "agent",
+                         "scope":  "knowledge:read, attempts:read",
+                         "is_current":  false,
+                         "last_seen":  "14 mins ago"
+                     },
+                     {
+                         "id":  "sess_03",
+                         "user_id":  "usr_dev_01",
+                         "device":  "zehunt-cli v0.4.1",
+                         "ip":  "104.28.19.12 (Frankfurt, DE)",
+                         "type":  "cli",
+                         "is_current":  false,
+                         "last_seen":  "2 days ago"
+                     }
+                 ],
+    "authSessions":  [
+                         {
+                             "token":  "93c797ff-0cce-4a70-b7bf-7993f88eb63c",
+                             "user_id":  "usr_admin_01",
+                             "role":  "admin",
+                             "created_at":  "2026-09-30T00:23:39.511Z",
+                             "expires_at":  "2026-10-07T00:23:39.511Z"
+                         }
+                     ]
 }
